@@ -5,9 +5,38 @@ const {
   sanitizeText,
   sanitizeEmail,
   normalizeBoolean,
+  normalizeEnum,
+  normalizeInteger,
   normalizeStringArray,
   ensureId
 } = require("../utils/normalizers");
+
+const defaultHomeReviews = {
+  eyebrow: "Partner Feedback",
+  title: "Reviews",
+  text: "",
+  displayMode: "text",
+  summary: {
+    label: "Average sentiment from early review rounds",
+    value: "4.8/5",
+    detail: "",
+    metrics: [
+      { value: "92%", label: "felt the site looked established" },
+      { value: "3/3", label: "mentioned product clarity" },
+      { value: "Fast Read", label: "more credible first read" }
+    ]
+  },
+  items: [
+    {
+      id: "review-1",
+      quote: "The brand block feels like a real company introduction, not a placeholder.",
+      rating: 5,
+      author: "Anna Reed",
+      meta: "Retail Buyer",
+      imageUrl: ""
+    }
+  ]
+};
 
 function mapSiteSettings(row) {
   return {
@@ -24,6 +53,7 @@ function mapHomeContent(row) {
     highlights: safeParseJson(row.highlights_json, []),
     featuredProductSlugs: safeParseJson(row.featured_product_slugs_json, []),
     featuredVideoSlugs: safeParseJson(row.featured_video_slugs_json, []),
+    reviews: safeParseJson(row.reviews_json, defaultHomeReviews),
     sectionToggles: safeParseJson(row.section_toggles_json, [])
   };
 }
@@ -112,16 +142,64 @@ async function getHomeContent() {
   return mapHomeContent(rows[0]);
 }
 
+function normalizeReviewMetricArray(value, fallback = []) {
+  const source = Array.isArray(value) ? value : fallback;
+
+  return source
+    .slice(0, 6)
+    .map((item) => ({
+      value: sanitizeString(item?.value, { max: 40 }),
+      label: sanitizeString(item?.label, { max: 120 })
+    }))
+    .filter((item) => item.value && item.label);
+}
+
+function normalizeReviewItems(value, fallback = []) {
+  const source = Array.isArray(value) ? value : fallback;
+
+  return source
+    .slice(0, 10)
+    .map((item, index) => ({
+      id: ensureId(item?.id, `review-${index + 1}`),
+      quote: sanitizeText(item?.quote, { max: 500 }),
+      rating: normalizeInteger(item?.rating, { min: 1, max: 5, defaultValue: 5 }),
+      author: sanitizeString(item?.author, { max: 80 }),
+      meta: sanitizeString(item?.meta, { max: 120 }),
+      imageUrl: sanitizeString(item?.imageUrl, { max: 255 })
+    }))
+    .filter((item) => item.quote);
+}
+
+function normalizeReviews(value, fallback = defaultHomeReviews) {
+  const base = value && typeof value === "object" ? value : fallback;
+  const summary = base.summary && typeof base.summary === "object" ? base.summary : fallback.summary;
+
+  return {
+    eyebrow: sanitizeString(base.eyebrow, { max: 60, defaultValue: fallback.eyebrow }),
+    title: sanitizeString(base.title, { max: 160, defaultValue: fallback.title }),
+    text: sanitizeText(base.text, { max: 300, defaultValue: fallback.text }),
+    displayMode: normalizeEnum(base.displayMode, ["text", "image"], fallback.displayMode),
+    summary: {
+      label: sanitizeString(summary.label, { max: 160, defaultValue: fallback.summary.label }),
+      value: sanitizeString(summary.value, { max: 40, defaultValue: fallback.summary.value }),
+      detail: sanitizeText(summary.detail, { max: 240, defaultValue: fallback.summary.detail }),
+      metrics: normalizeReviewMetricArray(summary.metrics, fallback.summary.metrics)
+    },
+    items: normalizeReviewItems(base.items, fallback.items)
+  };
+}
+
 async function saveHomeContent(payload) {
   const current = await getHomeContent();
   const nextValue = {
     heroSlides: (Array.isArray(payload.heroSlides) ? payload.heroSlides : current.heroSlides)
-      .slice(0, 6)
+      .slice(0, 10)
       .map((item, index) => ({
         id: ensureId(item.id, `hero-${index + 1}`),
         title: sanitizeString(item.title, { max: 160 }),
         subtitle: sanitizeText(item.subtitle, { max: 300 }),
         targetUrl: sanitizeString(item.targetUrl, { max: 200, defaultValue: "/" }),
+        imageUrl: sanitizeString(item.imageUrl, { max: 255 }),
         enabled: normalizeBoolean(item.enabled, true)
       })),
     highlights: normalizeStringArray(payload.highlights ?? current.highlights, {
@@ -136,6 +214,7 @@ async function saveHomeContent(payload) {
       payload.featuredVideoSlugs ?? current.featuredVideoSlugs,
       { maxItems: 8, maxItemLength: 180 }
     ),
+    reviews: normalizeReviews(payload.reviews ?? current.reviews, current.reviews ?? defaultHomeReviews),
     sectionToggles: (Array.isArray(payload.sectionToggles) ? payload.sectionToggles : current.sectionToggles)
       .slice(0, 12)
       .map((item) => ({
@@ -147,13 +226,14 @@ async function saveHomeContent(payload) {
 
   await query(
     `UPDATE home_content
-     SET hero_slides_json = ?, highlights_json = ?, featured_product_slugs_json = ?, featured_video_slugs_json = ?, section_toggles_json = ?
+     SET hero_slides_json = ?, highlights_json = ?, featured_product_slugs_json = ?, featured_video_slugs_json = ?, reviews_json = ?, section_toggles_json = ?
      WHERE id = 1`,
     [
       stringifyJson(nextValue.heroSlides),
       stringifyJson(nextValue.highlights),
       stringifyJson(nextValue.featuredProductSlugs),
       stringifyJson(nextValue.featuredVideoSlugs),
+      stringifyJson(nextValue.reviews),
       stringifyJson(nextValue.sectionToggles)
     ]
   );

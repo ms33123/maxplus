@@ -64,6 +64,7 @@ async function createTables() {
       highlights_json JSON NOT NULL,
       featured_product_slugs_json JSON NOT NULL,
       featured_video_slugs_json JSON NOT NULL,
+      reviews_json JSON NOT NULL,
       section_toggles_json JSON NOT NULL,
       created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -120,6 +121,7 @@ async function createTables() {
       shipping TEXT NOT NULL,
       support TEXT NOT NULL,
       related_slugs_json JSON NOT NULL,
+      buy_action_json JSON NOT NULL,
       featured TINYINT(1) NOT NULL DEFAULT 0,
       created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -201,6 +203,47 @@ async function createTables() {
   }
 }
 
+async function ensureColumnExists(tableName, columnName, definitionSql) {
+  const rows = await query(
+    `SELECT COLUMN_NAME
+       FROM INFORMATION_SCHEMA.COLUMNS
+      WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = ?
+        AND COLUMN_NAME = ?
+      LIMIT 1`,
+    [tableName, columnName]
+  );
+
+  if (rows.length > 0) {
+    return;
+  }
+
+  await query(`ALTER TABLE \`${tableName}\` ADD COLUMN ${definitionSql}`);
+}
+
+async function migrateSchema() {
+  await ensureColumnExists(
+    "home_content",
+    "reviews_json",
+    "`reviews_json` JSON NULL AFTER `featured_video_slugs_json`"
+  );
+  await query(`UPDATE home_content SET reviews_json = ? WHERE reviews_json IS NULL`, [
+    stringifyJson(seedHomeContent.reviews)
+  ]);
+
+  await ensureColumnExists(
+    "products",
+    "buy_action_json",
+    "`buy_action_json` JSON NULL AFTER `related_slugs_json`"
+  );
+  await query(`UPDATE products SET buy_action_json = ? WHERE buy_action_json IS NULL`, [
+    stringifyJson({
+      label: "Go To Buy",
+      url: "/buy"
+    })
+  ]);
+}
+
 async function tableHasRows(tableName) {
   const rows = await query(`SELECT COUNT(*) AS count FROM ${tableName}`);
   return Number(rows[0]?.count ?? 0) > 0;
@@ -247,13 +290,15 @@ async function seedSettingsTables() {
          highlights_json,
          featured_product_slugs_json,
          featured_video_slugs_json,
+         reviews_json,
          section_toggles_json
-       ) VALUES (1, ?, ?, ?, ?, ?)`,
+       ) VALUES (1, ?, ?, ?, ?, ?, ?)`,
       [
         stringifyJson(seedHomeContent.heroSlides),
         stringifyJson(seedHomeContent.highlights),
         stringifyJson(seedHomeContent.featuredProductSlugs),
         stringifyJson(seedHomeContent.featuredVideoSlugs),
+        stringifyJson(seedHomeContent.reviews),
         stringifyJson(seedHomeContent.sectionToggles)
       ]
     );
@@ -336,8 +381,9 @@ async function seedCatalogTables() {
            shipping,
            support,
            related_slugs_json,
+           buy_action_json,
            featured
-         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           item.id,
           item.title,
@@ -367,6 +413,10 @@ async function seedCatalogTables() {
           item.shipping,
           item.support,
           stringifyJson(item.relatedSlugs),
+          stringifyJson({
+            label: item.buyButtonLabel,
+            url: item.buyButtonUrl
+          }),
           item.featured ? 1 : 0
         ]
       );
@@ -526,6 +576,7 @@ async function seedCrmTables() {
 async function initializeDatabase() {
   await ensureDatabaseExists();
   await createTables();
+  await migrateSchema();
   await seedAdminTable();
   await seedSettingsTables();
   await seedCatalogTables();

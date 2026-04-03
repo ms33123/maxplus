@@ -53,8 +53,32 @@ const routes = [
       },
       {
         path: "content/home",
-        name: "home-content",
-        component: () => import("../views/content/HomeContentView.vue")
+        redirect: "/content/home/hero"
+      },
+      {
+        path: "content/home/hero",
+        name: "home-hero",
+        component: () => import("../views/content/HomeHeroView.vue")
+      },
+      {
+        path: "content/home/products",
+        name: "home-products",
+        component: () => import("../views/content/HomeProductsView.vue")
+      },
+      {
+        path: "content/home/videos",
+        name: "home-videos",
+        component: () => import("../views/content/HomeVideosView.vue")
+      },
+      {
+        path: "content/home/reviews",
+        name: "home-reviews",
+        component: () => import("../views/content/HomeReviewsView.vue")
+      },
+      {
+        path: "content/reviews/manage",
+        name: "review-content",
+        component: () => import("../views/content/ReviewContentView.vue")
       },
       {
         path: "content/modules",

@@ -1,30 +1,83 @@
 <svg width="1600" height="980" viewBox="0 0 1600 980" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1600" height="980" fill="#10213A"/>
   <rect width="1600" height="980" fill="url(#bg)"/>
-  <rect x="968" y="112" width="510" height="676" rx="40" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.12)"/>
-  <rect x="1028" y="184" width="390" height="154" rx="24" fill="rgba(255,255,255,0.08)"/>
-  <rect x="1028" y="378" width="390" height="154" rx="24" fill="rgba(255,255,255,0.08)"/>
-  <rect x="1028" y="572" width="390" height="154" rx="24" fill="rgba(255,255,255,0.08)"/>
-  <circle cx="356" cy="228" r="118" fill="rgba(255,255,255,0.10)"/>
-  <circle cx="356" cy="228" r="50" fill="rgba(255,255,255,0.18)"/>
-  <rect x="246" y="400" width="126" height="252" rx="62" fill="#FF6A2A"/>
-  <rect x="406" y="354" width="126" height="298" rx="62" fill="#24456F"/>
-  <rect x="566" y="300" width="126" height="352" rx="62" fill="#5A86B6"/>
-  <path d="M274 444C352 470 418 470 498 444" stroke="#FFF2EA" stroke-width="18" stroke-linecap="round"/>
-  <path d="M598 362C650 466 650 542 598 646" stroke="#FFB28C" stroke-width="32" stroke-linecap="round"/>
-  <path d="M676 362C624 466 624 542 676 646" stroke="#FF8D47" stroke-width="32" stroke-linecap="round"/>
-  <circle cx="1112" cy="260" r="46" fill="#FF6A2A"/>
-  <circle cx="1112" cy="454" r="46" fill="#173053"/>
-  <circle cx="1112" cy="648" r="46" fill="#5A86B6"/>
-  <path d="M1206 260H1328" stroke="rgba(255,255,255,0.2)" stroke-width="12" stroke-linecap="round"/>
-  <path d="M1206 454H1328" stroke="rgba(255,255,255,0.2)" stroke-width="12" stroke-linecap="round"/>
-  <path d="M1206 648H1328" stroke="rgba(255,255,255,0.2)" stroke-width="12" stroke-linecap="round"/>
+  <rect width="1600" height="980" fill="url(#vignette)"/>
+  <circle cx="1170" cy="132" r="134" fill="url(#arenaLight)" opacity="0.78"/>
+  <circle cx="1372" cy="214" r="88" fill="url(#arenaLightSoft)" opacity="0.42"/>
+  <circle cx="956" cy="212" r="70" fill="url(#arenaLightSoft)" opacity="0.24"/>
+  <path d="M0 612C220 552 456 530 706 544C916 556 1206 616 1600 742V980H0V612Z" fill="url(#stands)"/>
+  <path d="M248 980L462 672H1498L1308 980H248Z" fill="url(#court)"/>
+  <path d="M318 980L522 692H1444L1274 980H318Z" stroke="rgba(255,247,236,0.76)" stroke-width="6"/>
+  <path d="M778 980L864 692" stroke="rgba(255,247,236,0.76)" stroke-width="6"/>
+  <path d="M634 980L700 776" stroke="rgba(255,247,236,0.4)" stroke-width="5"/>
+  <path d="M1000 980L1054 776" stroke="rgba(255,247,236,0.4)" stroke-width="5"/>
+  <path d="M860 692H1444" stroke="rgba(255,247,236,0.46)" stroke-width="5"/>
+  <path d="M936 804H1386" stroke="rgba(255,247,236,0.26)" stroke-width="4"/>
+  <path d="M790 304V758" stroke="#E3F0FF" stroke-width="12" stroke-linecap="round"/>
+  <path d="M1390 304V736" stroke="#E3F0FF" stroke-width="12" stroke-linecap="round"/>
+  <rect x="780" y="298" width="620" height="18" rx="9" fill="rgba(246,250,255,0.9)"/>
+  <rect x="780" y="316" width="620" height="326" fill="url(#netMesh)" opacity="0.74"/>
+  <path d="M780 428H1400" stroke="rgba(241,247,255,0.32)" stroke-width="4"/>
+  <path d="M780 538H1400" stroke="rgba(241,247,255,0.24)" stroke-width="4"/>
+  <path d="M904 316V642" stroke="rgba(241,247,255,0.24)" stroke-width="4"/>
+  <path d="M1032 316V642" stroke="rgba(241,247,255,0.24)" stroke-width="4"/>
+  <path d="M1160 316V642" stroke="rgba(241,247,255,0.24)" stroke-width="4"/>
+  <path d="M1288 316V642" stroke="rgba(241,247,255,0.24)" stroke-width="4"/>
+  <path d="M1108 276C1162 214 1238 182 1328 188C1426 194 1502 246 1562 344" stroke="rgba(255,154,96,0.26)" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="1238" cy="214" r="94" fill="url(#ballBody)"/>
+  <path d="M1192 156C1218 146 1248 146 1278 158C1308 170 1330 192 1340 218" stroke="#FFF4EA" stroke-width="10" stroke-linecap="round"/>
+  <path d="M1158 216C1190 200 1228 196 1266 204C1304 212 1336 232 1358 262" stroke="#FFF4EA" stroke-width="10" stroke-linecap="round"/>
+  <path d="M1182 286C1214 274 1246 274 1278 286" stroke="#FFF4EA" stroke-width="10" stroke-linecap="round"/>
+  <path d="M0 340C220 320 434 334 654 386" stroke="rgba(117,169,230,0.14)" stroke-width="20" stroke-linecap="round"/>
+  <rect x="1086" y="106" width="320" height="118" rx="24" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.14)"/>
+  <rect x="1128" y="138" width="94" height="54" rx="14" fill="#FF7D3F"/>
+  <rect x="1246" y="140" width="118" height="12" rx="6" fill="rgba(255,255,255,0.24)"/>
+  <rect x="1246" y="166" width="88" height="12" rx="6" fill="rgba(255,255,255,0.18)"/>
+  <rect x="1246" y="192" width="132" height="12" rx="6" fill="rgba(255,255,255,0.12)"/>
+  <rect x="1034" y="564" width="388" height="198" rx="32" fill="rgba(8,18,31,0.32)" stroke="rgba(255,255,255,0.1)"/>
+  <circle cx="1118" cy="646" r="26" fill="#FF7D3F"/>
+  <path d="M1180 618H1336" stroke="rgba(255,255,255,0.18)" stroke-width="12" stroke-linecap="round"/>
+  <path d="M1180 658H1298" stroke="rgba(255,255,255,0.14)" stroke-width="12" stroke-linecap="round"/>
+  <path d="M1180 698H1358" stroke="rgba(255,255,255,0.1)" stroke-width="12" stroke-linecap="round"/>
+  <path d="M928 532C982 488 1044 466 1114 472" stroke="rgba(255,255,255,0.14)" stroke-width="8" stroke-linecap="round"/>
   <defs>
-    <linearGradient id="bg" x1="182" y1="54" x2="1338" y2="862" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#112B49"/>
-      <stop offset="0.52" stop-color="#1C426C"/>
-      <stop offset="1" stop-color="#54789D"/>
+    <linearGradient id="bg" x1="102" y1="16" x2="1456" y2="904" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#081426"/>
+      <stop offset="0.44" stop-color="#122C4D"/>
+      <stop offset="0.76" stop-color="#244D79"/>
+      <stop offset="1" stop-color="#6E92B9"/>
+    </linearGradient>
+    <radialGradient id="arenaLight" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1170 132) rotate(90) scale(134)">
+      <stop stop-color="#E5F1FF"/>
+      <stop offset="0.58" stop-color="#BAD5F4" stop-opacity="0.56"/>
+      <stop offset="1" stop-color="#BAD5F4" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="arenaLightSoft" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1372 214) rotate(90) scale(88)">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="stands" x1="800" y1="544" x2="800" y2="980" gradientUnits="userSpaceOnUse">
+      <stop stop-color="rgba(5,12,21,0)"/>
+      <stop offset="0.38" stop-color="rgba(5,12,21,0.46)"/>
+      <stop offset="1" stop-color="rgba(3,9,17,0.92)"/>
+    </linearGradient>
+    <linearGradient id="court" x1="248" y1="980" x2="1498" y2="672" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#693E22"/>
+      <stop offset="0.22" stop-color="#935831"/>
+      <stop offset="0.5" stop-color="#C27E4C"/>
+      <stop offset="0.76" stop-color="#8A522C"/>
+      <stop offset="1" stop-color="#5B331C"/>
+    </linearGradient>
+    <pattern id="netMesh" width="28" height="24" patternUnits="userSpaceOnUse">
+      <path d="M0 0H28M0 12H28M0 24H28M0 0V24M14 0V24M28 0V24" stroke="rgba(246,250,255,0.2)" stroke-width="1.4"/>
+    </pattern>
+    <radialGradient id="ballBody" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1238 214) rotate(90) scale(94)">
+      <stop stop-color="#FFB487"/>
+      <stop offset="0.56" stop-color="#FF8648"/>
+      <stop offset="1" stop-color="#E35F24"/>
+    </radialGradient>
+    <linearGradient id="vignette" x1="0" y1="0" x2="0" y2="980" gradientUnits="userSpaceOnUse">
+      <stop stop-color="rgba(0,0,0,0.04)"/>
+      <stop offset="1" stop-color="rgba(0,0,0,0.2)"/>
     </linearGradient>
   </defs>
 </svg>
-

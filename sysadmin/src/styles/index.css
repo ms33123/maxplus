@@ -174,6 +174,10 @@ a {
   gap: 0.75rem;
 }
 
+.inline-row--spread {
+  justify-content: space-between;
+}
+
 .header-bar__user {
   display: grid;
   justify-items: end;
@@ -189,8 +193,10 @@ a {
 
 .admin-shell__content {
   flex: 1;
+  min-width: 0;
   min-height: 0;
   padding: 0 1.8rem 1.8rem;
+  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -235,6 +241,7 @@ a {
 }
 
 .page-card {
+  min-width: 0;
   padding: 1.3rem;
 }
 

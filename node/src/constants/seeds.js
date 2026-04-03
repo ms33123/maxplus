@@ -66,6 +66,7 @@ const seedHomeContent = {
       title: "Sporting Goods That Look Ready To Move",
       subtitle: "Homepage hero for product and wholesale traffic.",
       targetUrl: "/products",
+      imageUrl: "/images/hero-training.svg",
       enabled: true
     },
     {
@@ -73,6 +74,7 @@ const seedHomeContent = {
       title: "Modern Layout With Product Depth",
       subtitle: "Second hero slide for category and SEO expansion.",
       targetUrl: "/videos",
+      imageUrl: "/images/hero-performance.svg",
       enabled: true
     },
     {
@@ -80,6 +82,7 @@ const seedHomeContent = {
       title: "Built For Clubs, Camps, Retail, And Family Use",
       subtitle: "Third hero slide for broader brand positioning.",
       targetUrl: "/buy",
+      imageUrl: "/images/hero-recreation.svg",
       enabled: true
     }
   ],
@@ -96,6 +99,48 @@ const seedHomeContent = {
     "match-ball-pack"
   ],
   featuredVideoSlugs: ["portable-volleyball-net-setup", "cone-drill-station"],
+  reviews: {
+    eyebrow: "Partner Feedback",
+    title: "Reviews",
+    text: "Feedback content can be switched between text-only cards and avatar-supported cards.",
+    displayMode: "text",
+    summary: {
+      label: "Average sentiment from early review rounds",
+      value: "4.8/5",
+      detail: "Review data is now editable from the admin console.",
+      metrics: [
+        { value: "92%", label: "felt the site looked established" },
+        { value: "3/3", label: "mentioned product clarity" },
+        { value: "Fast Read", label: "more credible first read" }
+      ]
+    },
+    items: [
+      {
+        id: "review-1",
+        quote: "The brand block feels like a real company introduction, not a placeholder.",
+        rating: 5,
+        author: "Anna Reed",
+        meta: "Retail Buyer",
+        imageUrl: ""
+      },
+      {
+        id: "review-2",
+        quote: "The review cards make the page feel closer to a launch-ready brand site.",
+        rating: 5,
+        author: "Marcus Hill",
+        meta: "Club Program Lead",
+        imageUrl: ""
+      },
+      {
+        id: "review-3",
+        quote: "Brand story and product depth now sit in the right order for quick evaluation.",
+        rating: 4,
+        author: "Sophie Chen",
+        meta: "Ecommerce Manager",
+        imageUrl: ""
+      }
+    ]
+  },
   sectionToggles: [
     { key: "hero", label: "首屏轮播", enabled: true },
     { key: "videos", label: "视频模块", enabled: true },
@@ -200,6 +245,105 @@ const seedCategories = [
   }
 ];
 
+const seedVideoCategories = [
+  {
+    id: "vcat-parent-1",
+    name: "Strength Training",
+    slug: "strength-training",
+    parentId: "",
+    sortOrder: 1,
+    enabled: true
+  },
+  {
+    id: "vcat-parent-2",
+    name: "Agility Training",
+    slug: "agility-training",
+    parentId: "",
+    sortOrder: 2,
+    enabled: true
+  },
+  {
+    id: "vcat-parent-3",
+    name: "Recovery Routines",
+    slug: "recovery-routines",
+    parentId: "",
+    sortOrder: 3,
+    enabled: true
+  },
+  {
+    id: "vcat-parent-4",
+    name: "Equipment Setup",
+    slug: "equipment-setup",
+    parentId: "",
+    sortOrder: 4,
+    enabled: true
+  },
+  {
+    id: "vcat-1",
+    name: "Push-Up",
+    slug: "push-up",
+    parentId: "vcat-parent-1",
+    sortOrder: 1,
+    enabled: true
+  },
+  {
+    id: "vcat-2",
+    name: "Squat",
+    slug: "squat",
+    parentId: "vcat-parent-1",
+    sortOrder: 2,
+    enabled: true
+  },
+  {
+    id: "vcat-3",
+    name: "Cone Footwork",
+    slug: "cone-footwork",
+    parentId: "vcat-parent-2",
+    sortOrder: 1,
+    enabled: true
+  },
+  {
+    id: "vcat-4",
+    name: "Ladder Steps",
+    slug: "ladder-steps",
+    parentId: "vcat-parent-2",
+    sortOrder: 2,
+    enabled: true
+  },
+  {
+    id: "vcat-5",
+    name: "Roller Reset",
+    slug: "roller-reset",
+    parentId: "vcat-parent-3",
+    sortOrder: 1,
+    enabled: true
+  },
+  {
+    id: "vcat-6",
+    name: "Stretching",
+    slug: "stretching",
+    parentId: "vcat-parent-3",
+    sortOrder: 2,
+    enabled: true
+  },
+  {
+    id: "vcat-7",
+    name: "Net Setup",
+    slug: "net-setup",
+    parentId: "vcat-parent-4",
+    sortOrder: 1,
+    enabled: true
+  },
+  {
+    id: "vcat-8",
+    name: "Court Layout",
+    slug: "court-layout",
+    parentId: "vcat-parent-4",
+    sortOrder: 2,
+    enabled: true
+  }
+];
+
 const seedProducts = [
   {
     id: "prd-1",
@@ -242,7 +386,9 @@ const seedProducts = [
     support:
       "Replacement parts, setup video guidance, and wholesale quote support available on request.",
     relatedSlugs: ["match-ball-pack", "agility-cone-ladder-set"],
-    featured: true
+    featured: true,
+    buyButtonLabel: "Go To Buy",
+    buyButtonUrl: "/buy"
   },
   {
     id: "prd-2",
@@ -283,7 +429,9 @@ const seedProducts = [
     shipping: "Ships flat with low cubic volume for efficient master-carton loading.",
     support: "Retail set-up guidance and bundle recommendations included for wholesale buyers.",
     relatedSlugs: ["portable-volleyball-net-kit", "resistance-band-pack"],
-    featured: true
+    featured: true,
+    buyButtonLabel: "Go To Buy",
+    buyButtonUrl: "/buy"
   },
   {
     id: "prd-3",
@@ -324,7 +472,9 @@ const seedProducts = [
     shipping: "Ships in compact cartons with efficient shelf-ready inner packs.",
     support: "Branding adaptation and leaflet customization available for larger orders.",
     relatedSlugs: ["agility-cone-ladder-set"],
-    featured: true
+    featured: true,
+    buyButtonLabel: "Go To Buy",
+    buyButtonUrl: "/buy"
   },
   {
     id: "prd-4",
@@ -365,7 +515,9 @@ const seedProducts = [
     shipping: "Outer cartons optimized for stack stability and mixed-pallet shipment.",
     support: "Custom logo print support available subject to MOQ and sample approval.",
     relatedSlugs: ["portable-volleyball-net-kit"],
-    featured: true
+    featured: true,
+    buyButtonLabel: "Go To Buy",
+    buyButtonUrl: "/buy"
   },
   {
     id: "prd-5",
@@ -399,7 +551,9 @@ const seedProducts = [
     shipping: "Compact pack-out for easy mixed cartons.",
     support: "After-sales care guidance available.",
     relatedSlugs: ["resistance-band-pack"],
-    featured: false
+    featured: false,
+    buyButtonLabel: "Go To Buy",
+    buyButtonUrl: "/buy"
   }
 ];
 
@@ -408,9 +562,7 @@ const seedVideos = [
     id: "vid-1",
     title: "How To Set Up The Portable Volleyball Net",
     slug: "portable-volleyball-net-setup",
-    categoryId: "cat-1",
-    topic: "Setup",
-    topicSlug: "setup",
+    videoCategoryId: "vcat-7",
     duration: "03:42",
     status: "published",
     cover: "/images/video-net-cover.png",
@@ -424,9 +576,7 @@ const seedVideos = [
     id: "vid-2",
     title: "Cone Drill Setup In 5 Minutes",
     slug: "cone-drill-station",
-    categoryId: "cat-2",
-    topic: "Drills",
-    topicSlug: "drills",
+    videoCategoryId: "vcat-3",
     duration: "04:05",
     status: "published",
     cover: "/images/video-cone-cover.png",
@@ -440,9 +590,7 @@ const seedVideos = [
     id: "vid-3",
     title: "Recovery Roller Reset Routine",
     slug: "roller-reset-routine",
-    categoryId: "cat-4",
-    topic: "Routine",
-    topicSlug: "routine",
+    videoCategoryId: "vcat-5",
     duration: "03:14",
     status: "draft",
     cover: "/images/video-roller-cover.png",
@@ -567,6 +715,7 @@ module.exports = {
   seedSiteSettings,
   seedHomeContent,
   seedCategories,
+  seedVideoCategories,
   seedProducts,
   seedVideos,
   seedBlogs,

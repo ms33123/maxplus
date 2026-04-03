@@ -2,22 +2,23 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import CatalogProductGrid from "../components/CatalogProductGrid.vue";
-import InquiryForm from "../components/InquiryForm.vue";
 import PageBanner from "../components/PageBanner.vue";
 import { usePublicData } from "../composables/usePublicData";
 import { usePageMeta } from "../composables/usePageMeta";
 import { useStructuredData } from "../composables/useStructuredData";
 
 const route = useRoute();
-const { findCategoryBySlug, findProductBySlug, getRelatedProducts } = usePublicData();
+const { findProductBySlug, getRelatedProducts } = usePublicData();
 
 const product = computed(() => findProductBySlug(String(route.params.slug ?? "")));
-const category = computed(() =>
-  product.value ? findCategoryBySlug(product.value.categorySlug) : undefined
-);
 const relatedProducts = computed(() =>
   product.value ? getRelatedProducts(product.value) : []
 );
+const isInternalBuyLink = computed(() => (product.value?.buyButtonUrl || "/buy").startsWith("/"));
+
+const getMediaStyle = (imageUrl: string) => ({
+  backgroundImage: `url(${imageUrl})`
+});
 
 usePageMeta(
   computed(() => ({
@@ -57,6 +58,7 @@ useStructuredData(
 
 <template>
   <PageBanner
+    class="page-banner--product-detail"
     :eyebrow="product?.tag ?? 'Product'"
     :title="product?.title ?? 'Product Not Found'"
   />
@@ -65,9 +67,23 @@ useStructuredData(
     <section class="section product-detail">
       <div class="shell product-detail__layout">
         <div class="product-detail__media reveal" v-reveal>
-          <div :class="['product-card__visual', 'product-detail__hero', product.visualClass]"></div>
+          <div
+            v-if="product.heroImage"
+            class="product-card__visual product-detail__hero product-card__visual--photo"
+            :style="getMediaStyle(product.heroImage)"
+          ></div>
+          <div v-else :class="['product-card__visual', 'product-detail__hero', product.visualClass]"></div>
 
-          <div class="product-detail__gallery">
+          <div v-if="product.galleryImages?.length" class="product-detail__gallery">
+            <div
+              v-for="item in product.galleryImages"
+              :key="item"
+              class="catalog-gallery__item catalog-gallery__item--photo"
+              :style="getMediaStyle(item)"
+            ></div>
+          </div>
+
+          <div v-else class="product-detail__gallery">
             <div
               v-for="item in product.galleryClasses"
               :key="item"
@@ -81,84 +97,61 @@ useStructuredData(
             {{ product.categoryLabel }}
           </RouterLink>
 
-          <h2>{{ product.title }}</h2>
-          <p>{{ product.description }}</p>
+          <h2 class="product-detail__title">{{ product.title }}</h2>
+          <p class="product-detail__intro">{{ product.summary }}</p>
 
           <div class="product-detail__price">
             <strong>{{ product.price }}</strong>
             <span>{{ product.referencePrice }}</span>
           </div>
 
-          <div class="product-detail__meta">
-            <span>SKU: {{ product.sku }}</span>
-            <span>{{ product.stockStatus }}</span>
-            <span>MOQ: {{ product.orderMinimum }}</span>
-            <span>Lead Time: {{ product.leadTime }}</span>
+          <div class="product-detail__facts">
+            <article class="product-detail__fact">
+              <small>SKU</small>
+              <strong>{{ product.sku }}</strong>
+            </article>
+            <article class="product-detail__fact">
+              <small>Status</small>
+              <strong>{{ product.stockStatus }}</strong>
+            </article>
+            <article class="product-detail__fact">
+              <small>MOQ</small>
+              <strong>{{ product.orderMinimum }}</strong>
+            </article>
+            <article class="product-detail__fact">
+              <small>Lead Time</small>
+              <strong>{{ product.leadTime }}</strong>
+            </article>
           </div>
 
           <div class="product-detail__actions">
-            <a class="button button--primary" href="#product-inquiry">Get Quote</a>
-            <RouterLink class="button button--ghost product-detail__ghost" to="/contact">
-              Contact Us
+            <RouterLink
+              v-if="isInternalBuyLink"
+              class="button button--primary"
+              :to="product.buyButtonUrl || '/buy'"
+            >
+              {{ product.buyButtonLabel || "Go To Buy" }}
             </RouterLink>
+            <a
+              v-else
+              class="button button--primary"
+              :href="product.buyButtonUrl || '/buy'"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {{ product.buyButtonLabel || "Go To Buy" }}
+            </a>
           </div>
-
-          <ul class="product-detail__highlights">
-            <li v-for="item in product.highlights" :key="item">{{ item }}</li>
-          </ul>
         </div>
       </div>
     </section>
 
-    <section class="section product-detail__info">
-      <div class="shell product-detail__info-grid">
-        <article class="detail-card reveal" v-reveal>
-          <p class="eyebrow">Specifications</p>
-          <div class="detail-card__rows">
-            <div v-for="item in product.specifications" :key="item.label" class="detail-card__row">
-              <span>{{ item.label }}</span>
-              <strong>{{ item.value }}</strong>
-            </div>
-          </div>
+    <section class="section product-detail__description">
+      <div class="shell">
+        <article class="detail-card product-detail__description-card reveal" v-reveal>
+          <p class="eyebrow">Product Details</p>
+          <p>{{ product.description }}</p>
         </article>
-
-        <article class="detail-card reveal" v-reveal>
-          <p class="eyebrow">Applications</p>
-          <ul class="detail-card__list">
-            <li v-for="item in product.applications" :key="item">{{ item }}</li>
-          </ul>
-        </article>
-
-        <article class="detail-card reveal" v-reveal>
-          <p class="eyebrow">Shipping</p>
-          <p>{{ product.shipping }}</p>
-          <p class="detail-card__support">{{ product.support }}</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section product-inquiry" id="product-inquiry">
-      <div class="shell product-inquiry__layout">
-        <div class="product-inquiry__copy reveal" v-reveal>
-          <p class="eyebrow">Product Inquiry</p>
-          <h2>Use this form for quote and product-specific questions.</h2>
-          <p>
-            Category:
-            <RouterLink :to="`/categories/${product.categorySlug}`">
-              {{ category?.title ?? product.categoryLabel }}
-            </RouterLink>
-          </p>
-        </div>
-
-        <InquiryForm
-          title="Request quote or product details"
-          submit-label="Send Product Inquiry"
-          demo-status="Demo mode only. The product inquiry form is styled and ready for later integration."
-          source="product"
-          source-label="Product"
-          :source-value="product.title"
-          message-placeholder="Tell us quantity, branding need, target market, or shipping questions."
-        />
       </div>
     </section>
 

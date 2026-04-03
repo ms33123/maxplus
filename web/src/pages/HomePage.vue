@@ -7,14 +7,17 @@ import ReviewsSection from "../components/ReviewsSection.vue";
 import VideoSection from "../components/VideoSection.vue";
 import { usePublicData } from "../composables/usePublicData";
 
-const { siteContent } = usePublicData();
+const { siteContent, homeContent } = usePublicData();
+
+const isSectionEnabled = (key: string) =>
+  homeContent.value.sectionToggles.find((item) => item.key === key)?.enabled ?? true;
 </script>
 
 <template>
-  <HeroSlider :hero="siteContent.hero" />
-  <VideoSection :videos="siteContent.videos" />
-  <FeaturedProductsSection :featured="siteContent.featured" />
+  <HeroSlider v-if="isSectionEnabled('hero')" :hero="siteContent.hero" />
+  <VideoSection v-if="isSectionEnabled('videos')" :videos="siteContent.videos" />
+  <FeaturedProductsSection v-if="isSectionEnabled('products')" :featured="siteContent.featured" />
   <CategorySection :categories="siteContent.categories" />
-  <ReviewsSection :reviews="siteContent.reviews" />
-  <ContactSection :contact="siteContent.contact" />
+  <ReviewsSection v-if="isSectionEnabled('reviews')" :reviews="siteContent.reviews" />
+  <ContactSection v-if="isSectionEnabled('contact')" :contact="siteContent.contact" />
 </template>

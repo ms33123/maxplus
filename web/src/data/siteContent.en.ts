@@ -144,6 +144,7 @@ export const siteContent: SiteContent = {
     eyebrow: "Partner Feedback",
     title: "Reviews",
     text: "",
+    displayMode: "text",
     summary: {
       label: "Average sentiment from early review rounds",
       value: "4.8/5",
@@ -156,28 +157,52 @@ export const siteContent: SiteContent = {
     },
     items: [
       {
+        id: "review-1",
         quote: "The brand block feels like a real company introduction, not a placeholder.",
-        rating: 5
+        rating: 5,
+        author: "Anna Reed",
+        meta: "Retail Buyer",
+        imageUrl: ""
       },
       {
+        id: "review-2",
         quote: "The review cards make the page feel closer to a launch-ready brand site.",
-        rating: 5
+        rating: 5,
+        author: "Marcus Hill",
+        meta: "Club Program Lead",
+        imageUrl: ""
       },
       {
+        id: "review-3",
         quote: "Brand story and product depth now sit in the right order for quick evaluation.",
-        rating: 4
+        rating: 4,
+        author: "Sophie Chen",
+        meta: "Ecommerce Manager",
+        imageUrl: ""
       },
       {
+        id: "review-4",
         quote: "The homepage now feels organized enough for a buyer presentation.",
-        rating: 5
+        rating: 5,
+        author: "Liam Grant",
+        meta: "Wholesale Prospect",
+        imageUrl: ""
       },
       {
+        id: "review-5",
         quote: "The price and CTA line reads cleanly across the product cards.",
-        rating: 4
+        rating: 4,
+        author: "Eva Morris",
+        meta: "Retail Operations",
+        imageUrl: ""
       },
       {
+        id: "review-6",
         quote: "The review carousel adds proof without making the page feel crowded.",
-        rating: 5
+        rating: 5,
+        author: "Noah Bennett",
+        meta: "Brand Consultant",
+        imageUrl: ""
       }
     ]
   },

@@ -12,6 +12,10 @@ withDefaults(
     emptyText: "Try another combination."
   }
 );
+
+const getMediaStyle = (imageUrl?: string) => ({
+  backgroundImage: `url(${imageUrl})`
+});
 </script>
 
 <template>
@@ -22,7 +26,12 @@ withDefaults(
       class="catalog-card reveal"
       v-reveal
     >
-      <div :class="['product-card__visual', item.visualClass]"></div>
+      <div
+        v-if="item.heroImage"
+        class="product-card__visual product-card__visual--photo"
+        :style="getMediaStyle(item.heroImage)"
+      ></div>
+      <div v-else :class="['product-card__visual', item.visualClass]"></div>
 
       <div class="catalog-card__body">
         <div class="catalog-card__topline">
@@ -30,7 +39,7 @@ withDefaults(
           <span class="catalog-card__stock">{{ item.stockStatus }}</span>
         </div>
 
-        <h3>{{ item.title }}</h3>
+        <h3 class="catalog-card__title">{{ item.title }}</h3>
         <p>{{ item.summary }}</p>
 
         <div class="catalog-card__chips">

@@ -39,6 +39,8 @@ export interface CatalogProduct {
   useCase: string;
   visualClass: string;
   galleryClasses: string[];
+  heroImage?: string;
+  galleryImages?: string[];
   highlights: string[];
   specifications: ProductSpecification[];
   applications: string[];
@@ -46,6 +48,8 @@ export interface CatalogProduct {
   support: string;
   relatedSlugs: string[];
   featured?: boolean;
+  buyButtonLabel?: string;
+  buyButtonUrl?: string;
 }
 
 export interface TutorialVideo {

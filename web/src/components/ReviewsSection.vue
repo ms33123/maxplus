@@ -24,6 +24,18 @@ const scrollReviews = (direction: number) => {
     behavior: "smooth"
   });
 };
+
+const getAvatarStyle = (imageUrl: string) => ({
+  backgroundImage: `url(${imageUrl})`
+});
+
+const getInitials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((item) => item[0]?.toUpperCase() || "")
+    .join("");
 </script>
 
 <template>
@@ -74,9 +86,25 @@ const scrollReviews = (direction: number) => {
         <div ref="railRef" class="review-grid">
           <article
             v-for="item in reviews.items"
-            :key="item.quote"
-            class="review-card"
+            :key="item.id"
+            :class="['review-card', { 'review-card--with-image': reviews.displayMode === 'image' }]"
           >
+            <div v-if="reviews.displayMode === 'image'" class="review-card__profile">
+              <div
+                v-if="item.imageUrl"
+                class="review-card__avatar review-card__avatar--image"
+                :style="getAvatarStyle(item.imageUrl)"
+              ></div>
+              <div v-else class="review-card__avatar">
+                {{ getInitials(item.author) || "MP" }}
+              </div>
+
+              <div class="review-card__identity">
+                <strong>{{ item.author }}</strong>
+                <span v-if="item.meta">{{ item.meta }}</span>
+              </div>
+            </div>
+
             <div class="review-card__stars" :aria-label="`${item.rating} out of 5 stars`">
               <span
                 v-for="star in 5"
@@ -90,6 +118,14 @@ const scrollReviews = (direction: number) => {
             <blockquote class="review-card__quote">
               “{{ item.quote }}”
             </blockquote>
+
+            <div
+              v-if="reviews.displayMode === 'text' && (item.author || item.meta)"
+              class="review-card__footer"
+            >
+              <strong v-if="item.author">{{ item.author }}</strong>
+              <span v-if="item.meta">{{ item.meta }}</span>
+            </div>
           </article>
         </div>
 

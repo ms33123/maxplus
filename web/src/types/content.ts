@@ -103,6 +103,7 @@ export interface FeaturedProductItem {
   price: string;
   href: string;
   visualClass: string;
+  imageUrl?: string;
 }
 
 export interface FeaturedContent {
@@ -139,14 +140,19 @@ export interface ReviewSummary {
 }
 
 export interface ReviewCardItem {
+  id: string;
   quote: string;
   rating: number;
+  author: string;
+  meta: string;
+  imageUrl: string;
 }
 
 export interface ReviewsContent {
   eyebrow: string;
   title: string;
   text: string;
+  displayMode: "text" | "image";
   summary: ReviewSummary;
   items: ReviewCardItem[];
 }

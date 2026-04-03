@@ -33,8 +33,12 @@ const groups = [
     items: [
       { label: "视频管理", path: "/media/videos" },
       { label: "博客管理", path: "/content/blog" },
-      { label: "首页内容", path: "/content/home" },
-      { label: "模块开关", path: "/content/modules" }
+      { label: "首页轮播", path: "/content/home/hero" },
+      { label: "首页产品", path: "/content/home/products" },
+      { label: "首页视频", path: "/content/home/videos" },
+      { label: "首页评价配置", path: "/content/home/reviews" },
+      { label: "评论内容管理", path: "/content/reviews/manage" },
+      { label: "首页模块开关", path: "/content/modules" }
     ]
   },
   {

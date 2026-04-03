@@ -43,7 +43,38 @@ export interface HeroSlideItem {
   title: string;
   subtitle: string;
   targetUrl: string;
+  imageUrl: string;
   enabled: boolean;
+}
+
+export interface HomeReviewMetric {
+  value: string;
+  label: string;
+}
+
+export interface HomeReviewSummary {
+  label: string;
+  value: string;
+  detail: string;
+  metrics: HomeReviewMetric[];
+}
+
+export interface HomeReviewItem {
+  id: string;
+  quote: string;
+  rating: number;
+  author: string;
+  meta: string;
+  imageUrl: string;
+}
+
+export interface HomeReviewsState {
+  eyebrow: string;
+  title: string;
+  text: string;
+  displayMode: "text" | "image";
+  summary: HomeReviewSummary;
+  items: HomeReviewItem[];
 }
 
 export interface HomeSectionToggle {
@@ -57,6 +88,7 @@ export interface HomeContentState {
   highlights: string[];
   featuredProductSlugs: string[];
   featuredVideoSlugs: string[];
+  reviews: HomeReviewsState;
   sectionToggles: HomeSectionToggle[];
 }
 
@@ -100,6 +132,8 @@ export interface ProductRecord {
   support?: string;
   relatedSlugs?: string[];
   featured?: boolean;
+  buyButtonLabel?: string;
+  buyButtonUrl?: string;
 }
 
 export interface VideoRecord {

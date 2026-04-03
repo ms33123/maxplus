@@ -34,10 +34,31 @@ interface RawHomeContent {
     title: string;
     subtitle: string;
     targetUrl: string;
+    imageUrl: string;
     enabled: boolean;
   }>;
   featuredProductSlugs: string[];
   featuredVideoSlugs: string[];
+  reviews: {
+    eyebrow: string;
+    title: string;
+    text: string;
+    displayMode: "text" | "image";
+    summary: {
+      label: string;
+      value: string;
+      detail: string;
+      metrics: Array<{ value: string; label: string }>;
+    };
+    items: Array<{
+      id: string;
+      quote: string;
+      rating: number;
+      author: string;
+      meta: string;
+      imageUrl: string;
+    }>;
+  };
   sectionToggles: Array<{
     key: string;
     label: string;
@@ -66,9 +87,13 @@ interface RawProduct {
   price: number;
   compareAtPrice: number;
   stock: number;
+  heroImage: string;
+  gallery: string[];
   summary: string;
   description?: string;
   tagLabel?: string;
+  orderMinimum?: string;
+  leadTime?: string;
   sportType?: string;
   audience?: string;
   useCase?: string;
@@ -80,6 +105,8 @@ interface RawProduct {
   support?: string;
   relatedSlugs?: string[];
   featured?: boolean;
+  buyButtonLabel?: string;
+  buyButtonUrl?: string;
 }
 
 interface RawVideo {
@@ -173,6 +200,27 @@ function inferGalleryClasses(product: RawProduct): string[] {
   ];
 }
 
+const defaultHomeContent: RawHomeContent = {
+  heroSlides: [],
+  featuredProductSlugs: [],
+  featuredVideoSlugs: [],
+  reviews: {
+    eyebrow: defaultSiteContent.reviews.eyebrow,
+    title: defaultSiteContent.reviews.title,
+    text: defaultSiteContent.reviews.text,
+    displayMode: defaultSiteContent.reviews.displayMode,
+    summary: cloneValue(defaultSiteContent.reviews.summary),
+    items: cloneValue(defaultSiteContent.reviews.items)
+  },
+  sectionToggles: [
+    { key: "hero", label: "首屏轮播", enabled: true },
+    { key: "videos", label: "视频模块", enabled: true },
+    { key: "products", label: "精选商品", enabled: true },
+    { key: "reviews", label: "评价模块", enabled: true },
+    { key: "contact", label: "联系模块", enabled: true }
+  ]
+};
+
 function buildMappedCategories(rawCategories: RawCategory[]): CatalogCategory[] {
   return rawCategories.map((item) => ({
     slug: item.slug,
@@ -215,6 +263,8 @@ function buildMappedProducts(
       useCase: item.useCase || "Catalog Entry",
       visualClass: item.visualClass || "product-card__visual--net",
       galleryClasses: inferGalleryClasses(item),
+      heroImage: item.heroImage || "",
+      galleryImages: item.gallery?.length ? item.gallery : item.heroImage ? [item.heroImage] : [],
       highlights: item.highlights?.length ? item.highlights : [item.summary],
       specifications:
         item.specifications?.length
@@ -227,7 +277,9 @@ function buildMappedProducts(
       shipping: item.shipping || "Standard export packaging available.",
       support: item.support || "Wholesale support available on request.",
       relatedSlugs: item.relatedSlugs?.length ? item.relatedSlugs : [],
-      featured: Boolean(item.featured)
+      featured: Boolean(item.featured),
+      buyButtonLabel: item.buyButtonLabel || "Go To Buy",
+      buyButtonUrl: item.buyButtonUrl || "/buy"
     };
   });
 }
@@ -276,6 +328,7 @@ function buildSiteContent(payload: PublicBootstrapPayload, categories: CatalogCa
 
       return {
         ...template,
+        backgroundImage: item.imageUrl || template.backgroundImage,
         title: item.title || template.title,
         text: item.subtitle || template.text,
         actions: [
@@ -301,7 +354,8 @@ function buildSiteContent(payload: PublicBootstrapPayload, categories: CatalogCa
       text: item.summary,
       price: item.price,
       href: `/products/${item.slug}`,
-      visualClass: item.visualClass
+      visualClass: item.visualClass,
+      imageUrl: item.heroImage
     }));
   }
 
@@ -337,6 +391,36 @@ function buildSiteContent(payload: PublicBootstrapPayload, categories: CatalogCa
     }));
   }
 
+  if (payload.homeContent.reviews) {
+    content.reviews = {
+      eyebrow: payload.homeContent.reviews.eyebrow || content.reviews.eyebrow,
+      title: payload.homeContent.reviews.title || content.reviews.title,
+      text: payload.homeContent.reviews.text || content.reviews.text,
+      displayMode: payload.homeContent.reviews.displayMode === "image" ? "image" : "text",
+      summary: {
+        label: payload.homeContent.reviews.summary?.label || content.reviews.summary.label,
+        value: payload.homeContent.reviews.summary?.value || content.reviews.summary.value,
+        detail: payload.homeContent.reviews.summary?.detail || content.reviews.summary.detail,
+        metrics: payload.homeContent.reviews.summary?.metrics?.length
+          ? payload.homeContent.reviews.summary.metrics.map((item) => ({
+              value: item.value,
+              label: item.label
+            }))
+          : content.reviews.summary.metrics
+      },
+      items: payload.homeContent.reviews.items?.length
+        ? payload.homeContent.reviews.items.map((item, index) => ({
+            id: item.id || `review-${index + 1}`,
+            quote: item.quote,
+            rating: Math.min(5, Math.max(1, Number(item.rating) || 5)),
+            author: item.author || "Anonymous Buyer",
+            meta: item.meta || "",
+            imageUrl: item.imageUrl || ""
+          }))
+        : content.reviews.items
+    };
+  }
+
   content.footer.text = payload.siteSettings.footer?.text || content.footer.text;
   content.footer.meta1 = payload.siteSettings.footer?.meta1 || content.footer.meta1;
   content.footer.meta2 = payload.siteSettings.footer?.meta2 || content.footer.meta2;
@@ -366,6 +450,7 @@ const products = ref<CatalogProduct[]>(cloneValue(defaultProducts));
 const videos = ref<TutorialVideo[]>(cloneValue(defaultVideos));
 const blogs = ref<BlogPost[]>(cloneValue(defaultBlogs));
 const siteSettings = ref<RawSiteSettings | null>(null);
+const homeContent = ref<RawHomeContent>(cloneValue(defaultHomeContent));
 const loading = ref(false);
 const loaded = ref(false);
 const error = ref("");
@@ -390,6 +475,24 @@ export async function loadPublicData(force = false) {
     videos.value = mappedVideos;
     blogs.value = mappedBlogs;
     siteSettings.value = data.siteSettings;
+    homeContent.value = {
+      ...cloneValue(defaultHomeContent),
+      ...data.homeContent,
+      reviews: {
+        ...cloneValue(defaultHomeContent.reviews),
+        ...(data.homeContent.reviews ?? {}),
+        summary: {
+          ...cloneValue(defaultHomeContent.reviews.summary),
+          ...(data.homeContent.reviews?.summary ?? {}),
+          metrics: data.homeContent.reviews?.summary?.metrics?.length
+            ? data.homeContent.reviews.summary.metrics
+            : cloneValue(defaultHomeContent.reviews.summary.metrics)
+        },
+        items: data.homeContent.reviews?.items?.length
+          ? data.homeContent.reviews.items
+          : cloneValue(defaultHomeContent.reviews.items)
+      }
+    };
     siteContent.value = buildSiteContent(data, mappedCategories, mappedProducts, mappedVideos);
     loaded.value = true;
   } catch (loadError) {
@@ -419,6 +522,7 @@ export function usePublicData() {
     videos,
     blogs,
     siteSettings,
+    homeContent,
     loading,
     error,
     loadPublicData,

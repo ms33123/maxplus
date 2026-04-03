@@ -27,7 +27,10 @@ const createDraft = (): ProductRecord => ({
   tags: [],
   heroImage: "",
   gallery: [],
-  summary: ""
+  summary: "",
+  description: "",
+  buyButtonLabel: "Go To Buy",
+  buyButtonUrl: "/buy"
 });
 
 const draft = reactive<ProductRecord>(createDraft());
@@ -41,10 +44,20 @@ const tagsText = computed({
   }
 });
 
+const galleryText = computed({
+  get: () => draft.gallery.join("\n"),
+  set: (value: string) => {
+    draft.gallery = value
+      .split(/\r?\n|,/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+});
+
 watch(
   () => props.product,
   (value) => {
-    Object.assign(draft, value ?? createDraft());
+    Object.assign(draft, createDraft(), value ?? {});
   },
   { immediate: true }
 );
@@ -126,8 +139,30 @@ const submit = () => {
         <el-input v-model="draft.heroImage" />
       </el-form-item>
 
+      <el-form-item label="详情图集">
+        <el-input
+          v-model="galleryText"
+          type="textarea"
+          :rows="4"
+          placeholder="每行一张图片地址，也可用英文逗号分隔"
+        />
+      </el-form-item>
+
+      <div class="editor-grid editor-grid--2">
+        <el-form-item label="购买按钮文案">
+          <el-input v-model="draft.buyButtonLabel" placeholder="如：Go To Buy" />
+        </el-form-item>
+        <el-form-item label="购买按钮链接">
+          <el-input v-model="draft.buyButtonUrl" placeholder="如：/buy 或 https://example.com" />
+        </el-form-item>
+      </div>
+
       <el-form-item label="商品摘要">
         <el-input v-model="draft.summary" type="textarea" :rows="4" />
+      </el-form-item>
+
+      <el-form-item label="详情描述">
+        <el-input v-model="draft.description" type="textarea" :rows="5" />
       </el-form-item>
     </el-form>
 

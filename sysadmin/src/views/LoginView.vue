@@ -24,7 +24,7 @@ const submit = async () => {
   try {
     await sessionStore.login(form.username, form.password, form.role);
     await bootstrapAdminData();
-    ElMessage.success("登录成功。");
+    ElMessage.success(sessionStore.isMockMode ? "后端不可用，已进入本地演示模式。" : "登录成功。");
     await router.push("/dashboard");
   } catch (error) {
     ElMessage.error(error instanceof Error ? error.message : "登录失败。");

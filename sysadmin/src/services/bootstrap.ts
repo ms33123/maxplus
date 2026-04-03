@@ -6,6 +6,7 @@ import { useSettingsStore } from "../stores/settings";
 import { useSystemStore } from "../stores/system";
 import type { AdminBootstrapPayload } from "../types/admin";
 import { apiPost } from "./http";
+import { getMockBootstrap, isMockToken } from "./mockAdmin";
 
 export async function bootstrapAdminData(pinia?: Pinia) {
   const sessionStore = useSessionStore(pinia);
@@ -14,7 +15,10 @@ export async function bootstrapAdminData(pinia?: Pinia) {
     return null;
   }
 
-  const data = await apiPost<AdminBootstrapPayload>("/admin/bootstrap", {}, { token: sessionStore.token });
+  const data =
+    sessionStore.isMockMode || isMockToken(sessionStore.token)
+      ? getMockBootstrap(sessionStore.session)
+      : await apiPost<AdminBootstrapPayload>("/admin/bootstrap", {}, { token: sessionStore.token });
 
   sessionStore.setSession(data.session);
   useCatalogStore(pinia).hydrate(data);

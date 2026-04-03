@@ -45,6 +45,7 @@ export const seedHomeContent: HomeContentState = {
       title: "Sporting Goods That Look Ready To Move",
       subtitle: "Homepage hero for product and wholesale traffic.",
       targetUrl: "/products",
+      imageUrl: "/images/hero-training.svg",
       enabled: true
     },
     {
@@ -52,6 +53,7 @@ export const seedHomeContent: HomeContentState = {
       title: "Modern Layout With Product Depth",
       subtitle: "Second hero slide for category and SEO expansion.",
       targetUrl: "/videos",
+      imageUrl: "/images/hero-performance.svg",
       enabled: true
     },
     {
@@ -59,6 +61,7 @@ export const seedHomeContent: HomeContentState = {
       title: "Built For Clubs, Camps, Retail, And Family Use",
       subtitle: "Third hero slide for broader brand positioning.",
       targetUrl: "/buy",
+      imageUrl: "/images/hero-recreation.svg",
       enabled: true
     }
   ],
@@ -70,6 +73,48 @@ export const seedHomeContent: HomeContentState = {
   ],
   featuredProductSlugs: ["portable-volleyball-net-kit", "agility-cone-ladder-set", "resistance-band-pack"],
   featuredVideoSlugs: ["portable-volleyball-net-setup", "cone-drill-station"],
+  reviews: {
+    eyebrow: "Partner Feedback",
+    title: "Reviews",
+    text: "Feedback content can be switched between text-only cards and avatar-supported cards.",
+    displayMode: "text",
+    summary: {
+      label: "Average sentiment from early review rounds",
+      value: "4.8/5",
+      detail: "Review data is now editable from the admin console.",
+      metrics: [
+        { value: "92%", label: "felt the site looked established" },
+        { value: "3/3", label: "mentioned product clarity" },
+        { value: "Fast Read", label: "more credible first read" }
+      ]
+    },
+    items: [
+      {
+        id: "review-1",
+        quote: "The brand block feels like a real company introduction, not a placeholder.",
+        rating: 5,
+        author: "Anna Reed",
+        meta: "Retail Buyer",
+        imageUrl: ""
+      },
+      {
+        id: "review-2",
+        quote: "The review cards make the page feel closer to a launch-ready brand site.",
+        rating: 5,
+        author: "Marcus Hill",
+        meta: "Club Program Lead",
+        imageUrl: ""
+      },
+      {
+        id: "review-3",
+        quote: "Brand story and product depth now sit in the right order for quick evaluation.",
+        rating: 4,
+        author: "Sophie Chen",
+        meta: "Ecommerce Manager",
+        imageUrl: ""
+      }
+    ]
+  },
   sectionToggles: [
     { key: "hero", label: "首屏轮播", enabled: true },
     { key: "videos", label: "视频模块", enabled: true },
@@ -133,7 +178,9 @@ export const seedProducts: ProductRecord[] = [
     tags: ["Best Seller", "Wholesale"],
     heroImage: "/images/net-kit-cover.png",
     gallery: ["/images/net-kit-1.png", "/images/net-kit-2.png"],
-    summary: "Portable net set for clubs, camps, and family use."
+    summary: "Portable net set for clubs, camps, and family use.",
+    buyButtonLabel: "Go To Buy",
+    buyButtonUrl: "/buy"
   },
   {
     id: "prd-2",
@@ -149,7 +196,9 @@ export const seedProducts: ProductRecord[] = [
     tags: ["Training"],
     heroImage: "/images/agility-cover.png",
     gallery: ["/images/agility-1.png"],
-    summary: "Coach-friendly drill set for speed and footwork."
+    summary: "Coach-friendly drill set for speed and footwork.",
+    buyButtonLabel: "Go To Buy",
+    buyButtonUrl: "/buy"
   },
   {
     id: "prd-3",
@@ -165,7 +214,9 @@ export const seedProducts: ProductRecord[] = [
     tags: ["Recovery"],
     heroImage: "/images/roller-cover.png",
     gallery: [],
-    summary: "Recovery kit for mobility and after-training care."
+    summary: "Recovery kit for mobility and after-training care.",
+    buyButtonLabel: "Go To Buy",
+    buyButtonUrl: "/buy"
   }
 ];
 

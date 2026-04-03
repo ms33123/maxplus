@@ -64,6 +64,8 @@ function mapCategory(row) {
 }
 
 function mapProduct(row) {
+  const buyAction = safeParseJson(row.buy_action_json, {});
+
   return {
     id: row.id,
     title: row.title,
@@ -93,7 +95,9 @@ function mapProduct(row) {
     shipping: row.shipping,
     support: row.support,
     relatedSlugs: safeParseJson(row.related_slugs_json, []),
-    featured: Boolean(row.featured)
+    featured: Boolean(row.featured),
+    buyButtonLabel: buyAction.label || "Go To Buy",
+    buyButtonUrl: buyAction.url || "/buy"
   };
 }
 
@@ -450,7 +454,17 @@ async function saveProduct(input) {
       maxItems: 8,
       maxItemLength: 180
     }),
-    featured: normalizeBoolean(input.featured, current?.featured ?? tags.includes("Best Seller"))
+    featured: normalizeBoolean(input.featured, current?.featured ?? tags.includes("Best Seller")),
+    buyAction: {
+      label: sanitizeString(input.buyButtonLabel, {
+        max: 80,
+        defaultValue: current?.buyButtonLabel || "Go To Buy"
+      }),
+      url: sanitizeString(input.buyButtonUrl, {
+        max: 255,
+        defaultValue: current?.buyButtonUrl || "/buy"
+      })
+    }
   };
 
   if (!payload.title || !payload.slug || !payload.sku || !payload.categoryId) {
@@ -460,7 +474,7 @@ async function saveProduct(input) {
   if (current) {
     await query(
       `UPDATE products
-       SET title = ?, slug = ?, sku = ?, category_id = ?, price = ?, compare_at_price = ?, stock = ?, weight = ?, status = ?, tags_json = ?, hero_image = ?, gallery_json = ?, summary = ?, description = ?, tag_label = ?, order_minimum = ?, lead_time = ?, sport_type = ?, audience = ?, use_case = ?, visual_class = ?, highlights_json = ?, specifications_json = ?, applications_json = ?, shipping = ?, support = ?, related_slugs_json = ?, featured = ?
+       SET title = ?, slug = ?, sku = ?, category_id = ?, price = ?, compare_at_price = ?, stock = ?, weight = ?, status = ?, tags_json = ?, hero_image = ?, gallery_json = ?, summary = ?, description = ?, tag_label = ?, order_minimum = ?, lead_time = ?, sport_type = ?, audience = ?, use_case = ?, visual_class = ?, highlights_json = ?, specifications_json = ?, applications_json = ?, shipping = ?, support = ?, related_slugs_json = ?, buy_action_json = ?, featured = ?
        WHERE id = ?`,
       [
         payload.title,
@@ -490,6 +504,7 @@ async function saveProduct(input) {
         payload.shipping,
         payload.support,
         stringifyJson(payload.relatedSlugs),
+        stringifyJson(payload.buyAction),
         payload.featured ? 1 : 0,
         payload.id
       ]
@@ -497,8 +512,8 @@ async function saveProduct(input) {
   } else {
     await query(
       `INSERT INTO products (
-         id, title, slug, sku, category_id, price, compare_at_price, stock, weight, status, tags_json, hero_image, gallery_json, summary, description, tag_label, order_minimum, lead_time, sport_type, audience, use_case, visual_class, highlights_json, specifications_json, applications_json, shipping, support, related_slugs_json, featured
-       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         id, title, slug, sku, category_id, price, compare_at_price, stock, weight, status, tags_json, hero_image, gallery_json, summary, description, tag_label, order_minimum, lead_time, sport_type, audience, use_case, visual_class, highlights_json, specifications_json, applications_json, shipping, support, related_slugs_json, buy_action_json, featured
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         payload.id,
         payload.title,
@@ -528,6 +543,7 @@ async function saveProduct(input) {
         payload.shipping,
         payload.support,
         stringifyJson(payload.relatedSlugs),
+        stringifyJson(payload.buyAction),
         payload.featured ? 1 : 0
       ]
     );
