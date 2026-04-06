@@ -2,6 +2,7 @@ import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 import type { AdminRole, AdminSession } from "../types/admin";
 import { isMockToken, loginWithMock } from "../services/mockAdmin";
+import { NAV_ACTIVE_TAB_KEY, NAV_TABS_KEY, useNavTabsStore } from "./navTabs";
 import { readStorage, removeStorage, writeStorage } from "../utils/storage";
 import { apiPost } from "../services/http";
 
@@ -108,9 +109,12 @@ export const useSessionStore = defineStore("session", () => {
   };
 
   const logout = () => {
+    useNavTabsStore().reset();
     setMode("api");
     setToken(null);
     setSession(null);
+    removeStorage(NAV_TABS_KEY);
+    removeStorage(NAV_ACTIVE_TAB_KEY);
   };
 
   return {

@@ -1,13 +1,45 @@
-const { getSiteSettings, getHomeContent, getSeoSettings } = require("./settingsService");
-const { getCategories, getProducts, getVideos, getBlogs } = require("./catalogService");
+const {
+  getPublicSiteSettings,
+  getHomeContent,
+  getBrandStory,
+  getBlogPage,
+  getSeoSettings,
+  getSubscribePopup
+} = require("./settingsService");
+const {
+  getCategories,
+  getVideoCategories,
+  getBlogCategories,
+  getProducts,
+  getVideos,
+  getBlogs
+} = require("./catalogService");
 
 async function getPublicBootstrap() {
-  const [siteSettings, homeContent, seo, categories, products, videos, blogs] =
+  const [
+    siteSettings,
+    homeContent,
+    subscribePopup,
+    brandStory,
+    blogPage,
+    seo,
+    categories,
+    videoCategories,
+    blogCategories,
+    products,
+    videos,
+    blogs
+  ] =
     await Promise.all([
-      getSiteSettings(),
+      getPublicSiteSettings(),
       getHomeContent(),
+      getSubscribePopup(),
+      getBrandStory(),
+      getBlogPage(),
       getSeoSettings(),
       getCategories(false),
+      getVideoCategories(false),
+      getBlogCategories(false),
       getProducts({ status: "published" }),
       getVideos({ status: "published" }),
       getBlogs({ status: "published" })
@@ -16,8 +48,13 @@ async function getPublicBootstrap() {
   return {
     siteSettings,
     homeContent,
+    subscribePopup,
+    brandStory,
+    blogPage,
     seo,
     categories,
+    videoCategories,
+    blogCategories,
     products,
     videos,
     blogs

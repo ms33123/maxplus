@@ -36,9 +36,24 @@ const submit = async () => {
   <div class="login-screen">
     <div class="login-card">
       <div class="login-card__copy">
-        <p class="login-card__eyebrow">后台系统</p>
+        <p class="login-card__eyebrow">Operations Console</p>
         <h1>MaxPlus 独立站后台管理系统</h1>
         <p>集中管理网站基础设置、商品、视频、博客、首页内容、SEO、询盘和订阅数据。</p>
+
+        <div class="login-card__highlights">
+          <article class="login-highlight">
+            <strong>首页运营</strong>
+            <span>统一调整轮播、分类、视频、评价和联系模块。</span>
+          </article>
+          <article class="login-highlight">
+            <strong>商品与内容</strong>
+            <span>商品、分类、视频、博客和品牌故事统一维护。</span>
+          </article>
+          <article class="login-highlight">
+            <strong>线索处理</strong>
+            <span>前台询盘与订阅数据在同一后台集中查看和跟进。</span>
+          </article>
+        </div>
       </div>
 
       <el-form class="login-form" label-position="top" @submit.prevent="submit">

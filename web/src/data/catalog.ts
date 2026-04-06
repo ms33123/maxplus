@@ -5,9 +5,10 @@ import type {
   ContactChannel,
   PolicyDocument,
   SearchSuggestion,
+  VideoCategory,
   TutorialVideo
 } from "../types/catalog";
-import type { HighlightItem } from "../types/content";
+import type { BrandStoryContent, HighlightItem } from "../types/content";
 
 export const catalogCategories: CatalogCategory[] = [
   {
@@ -17,6 +18,19 @@ export const catalogCategories: CatalogCategory[] = [
     summary: "Portable game-day gear for clubs, schools, camps, and community leagues.",
     bannerTitle: "Team Sports",
     bannerText: "Portable systems, durable match gear, and easy-pack field essentials.",
+    filterConfig: {
+      sportLabel: "Sport Type",
+      audienceLabel: "Audience",
+      useCaseLabel: "Use",
+      stockLabel: "Stock",
+      sortLabel: "Sort",
+      allLabel: "All",
+      sortDefaultLabel: "Default",
+      sortLatestLabel: "Latest",
+      sortPriceAscLabel: "Price Low To High",
+      sortPriceDescLabel: "Price High To Low",
+      sortBestSellingLabel: "Best Selling"
+    },
     visualClass: "catalog-hero__visual--team",
     highlights: [
       "Portable nets for school gyms and outdoor courts",
@@ -36,6 +50,19 @@ export const catalogCategories: CatalogCategory[] = [
     summary: "Footwork, conditioning, and drill equipment built for daily repetition.",
     bannerTitle: "Training Gear",
     bannerText: "Agility kits, rebound tools, and coach-friendly sets for repeat sessions.",
+    filterConfig: {
+      sportLabel: "Sport Type",
+      audienceLabel: "Audience",
+      useCaseLabel: "Use",
+      stockLabel: "Stock",
+      sortLabel: "Sort",
+      allLabel: "All",
+      sortDefaultLabel: "Default",
+      sortLatestLabel: "Latest",
+      sortPriceAscLabel: "Price Low To High",
+      sortPriceDescLabel: "Price High To Low",
+      sortBestSellingLabel: "Best Selling"
+    },
     visualClass: "catalog-hero__visual--training",
     highlights: [
       "Compact kits for coaches and personal training studios",
@@ -55,6 +82,19 @@ export const catalogCategories: CatalogCategory[] = [
     summary: "Backyard, beach, and park products designed for fast setup and casual use.",
     bannerTitle: "Outdoor Play",
     bannerText: "Portable systems for active families, rental operators, and spring-summer retail.",
+    filterConfig: {
+      sportLabel: "Sport Type",
+      audienceLabel: "Audience",
+      useCaseLabel: "Use",
+      stockLabel: "Stock",
+      sortLabel: "Sort",
+      allLabel: "All",
+      sortDefaultLabel: "Default",
+      sortLatestLabel: "Latest",
+      sortPriceAscLabel: "Price Low To High",
+      sortPriceDescLabel: "Price High To Low",
+      sortBestSellingLabel: "Best Selling"
+    },
     visualClass: "catalog-hero__visual--outdoor",
     highlights: [
       "Easy-carry sets for picnic, beach, and yard use",
@@ -74,6 +114,19 @@ export const catalogCategories: CatalogCategory[] = [
     summary: "Recovery tools and resistance products for mobility, warmup, and after-training care.",
     bannerTitle: "Recovery",
     bannerText: "Compact recovery tools that are easy to bundle with strength and team-sport lines.",
+    filterConfig: {
+      sportLabel: "Sport Type",
+      audienceLabel: "Audience",
+      useCaseLabel: "Use",
+      stockLabel: "Stock",
+      sortLabel: "Sort",
+      allLabel: "All",
+      sortDefaultLabel: "Default",
+      sortLatestLabel: "Latest",
+      sortPriceAscLabel: "Price Low To High",
+      sortPriceDescLabel: "Price High To Low",
+      sortBestSellingLabel: "Best Selling"
+    },
     visualClass: "catalog-hero__visual--recovery",
     highlights: [
       "High attach rate with team and training assortments",
@@ -417,6 +470,21 @@ export const catalogProducts: CatalogProduct[] = [
   }
 ];
 
+export const videoCategories: VideoCategory[] = [
+  { slug: "strength", title: "力量" },
+  { slug: "push-up", title: "俯卧撑", parentTitle: "力量" },
+  { slug: "bench-press", title: "卧推", parentTitle: "力量" },
+  { slug: "agility-training", title: "敏捷训练" },
+  { slug: "cone-footwork", title: "锥桶步伐", parentTitle: "敏捷训练" },
+  { slug: "ladder-steps", title: "梯子步法", parentTitle: "敏捷训练" },
+  { slug: "recovery-routines", title: "恢复训练" },
+  { slug: "roller-reset", title: "泡沫轴放松", parentTitle: "恢复训练" },
+  { slug: "stretching", title: "拉伸", parentTitle: "恢复训练" },
+  { slug: "equipment-setup", title: "器材安装" },
+  { slug: "net-setup", title: "球网安装", parentTitle: "器材安装" },
+  { slug: "court-layout", title: "场地布置", parentTitle: "器材安装" }
+];
+
 export const tutorialVideos: TutorialVideo[] = [
   {
     slug: "portable-volleyball-net-setup",
@@ -425,7 +493,9 @@ export const tutorialVideos: TutorialVideo[] = [
     duration: "03:42",
     summary: "A clean step-by-step setup guide for clubs, camps, and family buyers.",
     visualClass: "video-feature__media--setup",
-    categorySlug: "team-sports",
+    coverImage: "/images/video-net-cover.png",
+    videoUrl: "https://videos.maxplus.local/portable-volleyball-net-setup",
+    categorySlug: "net-setup",
     topicSlug: "setup",
     topicLabel: "Setup",
     featured: true
@@ -437,7 +507,9 @@ export const tutorialVideos: TutorialVideo[] = [
     duration: "04:05",
     summary: "A repeatable drill layout for clinics, PE, and quick footwork sessions.",
     visualClass: "video-card__media--cones",
-    categorySlug: "training-gear",
+    coverImage: "/images/video-cone-cover.png",
+    videoUrl: "https://videos.maxplus.local/cone-drill-station",
+    categorySlug: "cone-footwork",
     topicSlug: "drills",
     topicLabel: "Drills"
   },
@@ -448,7 +520,9 @@ export const tutorialVideos: TutorialVideo[] = [
     duration: "02:18",
     summary: "Warmup and light activation patterns using the compact band pack.",
     visualClass: "video-card__media--bands",
-    categorySlug: "recovery",
+    coverImage: "/images/video-roller-cover.png",
+    videoUrl: "https://videos.maxplus.local/resistance-band-warmup",
+    categorySlug: "stretching",
     topicSlug: "warmup",
     topicLabel: "Warmup"
   },
@@ -459,7 +533,9 @@ export const tutorialVideos: TutorialVideo[] = [
     duration: "01:56",
     summary: "Simple routines that keep recreational and club-use balls ready longer.",
     visualClass: "video-card__media--balls",
-    categorySlug: "team-sports",
+    coverImage: "/images/video-net-cover.png",
+    videoUrl: "https://videos.maxplus.local/ball-care-storage",
+    categorySlug: "court-layout",
     topicSlug: "care",
     topicLabel: "Care"
   },
@@ -470,7 +546,9 @@ export const tutorialVideos: TutorialVideo[] = [
     duration: "03:14",
     summary: "A short mobility and reset sequence built around the roller kit.",
     visualClass: "video-card__media--bands",
-    categorySlug: "recovery",
+    coverImage: "/images/video-roller-cover.png",
+    videoUrl: "https://videos.maxplus.local/roller-reset-routine",
+    categorySlug: "roller-reset",
     topicSlug: "routine",
     topicLabel: "Routine"
   },
@@ -481,7 +559,9 @@ export const tutorialVideos: TutorialVideo[] = [
     duration: "02:46",
     summary: "A simple folding and pack-out walkthrough for yard and park use.",
     visualClass: "video-card__media--cones",
-    categorySlug: "outdoor-play",
+    coverImage: "/images/video-cone-cover.png",
+    videoUrl: "https://videos.maxplus.local/pop-up-goal-fast-pack",
+    categorySlug: "net-setup",
     topicSlug: "setup",
     topicLabel: "Setup"
   },
@@ -492,7 +572,9 @@ export const tutorialVideos: TutorialVideo[] = [
     duration: "03:28",
     summary: "A compact outdoor practice layout built around foldable goals and markers.",
     visualClass: "video-card__media--balls",
-    categorySlug: "outdoor-play",
+    coverImage: "/images/video-net-cover.png",
+    videoUrl: "https://videos.maxplus.local/backyard-soccer-drill-layout",
+    categorySlug: "court-layout",
     topicSlug: "drills",
     topicLabel: "Drills"
   },
@@ -503,7 +585,9 @@ export const tutorialVideos: TutorialVideo[] = [
     duration: "03:06",
     summary: "A quick guide to using different rebound angles for first touch and return drills.",
     visualClass: "video-card__media--cones",
-    categorySlug: "training-gear",
+    coverImage: "/images/video-cone-cover.png",
+    videoUrl: "https://videos.maxplus.local/rebound-trainer-angle-guide",
+    categorySlug: "ladder-steps",
     topicSlug: "setup",
     topicLabel: "Setup"
   }
@@ -516,6 +600,9 @@ export const blogPosts: BlogPost[] = [
     title: "How To Build A Better Backyard Practice Setup",
     excerpt: "A compact guide to choosing portable nets, cones, and training accessories for home use.",
     meta: "5 min read",
+    author: "Operations Team",
+    publishDate: "2026-04-01",
+    coverImage: "/images/hero-training.svg",
     body: [
       "Backyard training products work best when setup time stays short and product purpose is obvious. That is why portable systems, fast-fold goals, and simple drill kits usually outperform complex bundles in first-time purchases.",
       "When building an assortment, start with one anchor item such as a portable net or foldable goal, then layer in smaller training accessories that increase basket value without making the decision heavy."
@@ -527,6 +614,9 @@ export const blogPosts: BlogPost[] = [
     title: "What Retailers Look For In Entry-Level Sports Gear",
     excerpt: "The product cues, packaging signals, and presentation details that improve first-buy confidence.",
     meta: "4 min read",
+    author: "Brand Team",
+    publishDate: "2026-04-02",
+    coverImage: "/images/hero-recreation.svg",
     body: [
       "Retail-friendly sports goods need clear use cases, credible materials, and packaging that signals low-friction setup. Products that are easy to explain in three sentences usually convert better in mixed-category environments.",
       "For first orders, merchants often favor compact master cartons, simple demo visuals, and products that sit well beside team-sport, training, and outdoor assortments."
@@ -538,6 +628,9 @@ export const blogPosts: BlogPost[] = [
     title: "Simple Maintenance Tips For Nets, Balls, And Bands",
     excerpt: "Basic storage and care routines that keep everyday sports equipment ready to use for longer.",
     meta: "3 min read",
+    author: "Support Team",
+    publishDate: "2026-03-29",
+    coverImage: "/images/hero-performance.svg",
     body: [
       "Routine care content is useful because it lowers return risk and makes the brand feel more service-oriented. For sports gear, the strongest care messages are usually storage, drying, and simple wear checks.",
       "Adding short how-to videos for maintenance gives each product line more after-sales value without creating long support content."
@@ -549,6 +642,9 @@ export const blogPosts: BlogPost[] = [
     title: "Which Products Perform Best During Spring And Summer",
     excerpt: "A quick look at the most browseable outdoor and team-play items during peak activity months.",
     meta: "6 min read",
+    author: "Planning Team",
+    publishDate: "2026-03-25",
+    coverImage: "/images/hero-recreation.svg",
     body: [
       "Outdoor play systems, portable nets, and casual match gear tend to read especially well during spring and summer campaigns. The visual signal of quick setup matters as much as the actual spec sheet.",
       "For seasonal planning, assortments that mix one hero item with two or three lower-priced accessories often create the cleanest browsing experience."
@@ -560,6 +656,9 @@ export const blogPosts: BlogPost[] = [
     title: "How Coaches Bundle Training Gear For Clinics",
     excerpt: "A quick view of how cones, hurdles, and rebound tools build a scalable session kit.",
     meta: "5 min read",
+    author: "Coaching Desk",
+    publishDate: "2026-03-20",
+    coverImage: "/images/hero-training.svg",
     body: [
       "Coaches usually build around repeatable categories: movement prep, footwork, directional speed, and ball return or finish work. That is why training ranges benefit from products that clearly sit inside a session sequence.",
       "When merchandise reflects that sequence, the catalog feels more coherent and commercial."
@@ -571,6 +670,9 @@ export const blogPosts: BlogPost[] = [
     title: "Why Recovery Products Improve A Sports Catalog",
     excerpt: "Recovery lines create higher basket flexibility and make the site feel more complete.",
     meta: "4 min read",
+    author: "Merchandising Team",
+    publishDate: "2026-03-16",
+    coverImage: "/images/hero-performance.svg",
     body: [
       "Recovery tools often act as a category bridge. They connect training, team sport, and wellness shoppers while taking relatively little display space.",
       "For a young brand site, they also broaden the impression from single-purpose seller to fuller sports range."
@@ -713,40 +815,55 @@ export const policyDocuments: PolicyDocument[] = [
   }
 ];
 
-export const aboutHighlights: HighlightItem[] = [
-  {
-    tag: "Capability",
-    title: "Multi-category catalog",
-    text: "Built to sell training, team-sport, outdoor, and recovery lines under one brand."
-  },
-  {
-    tag: "Workflow",
-    title: "Retail-ready presentation",
-    text: "Structured for buyers who need quick product clarity and credible brand signals."
-  },
-  {
-    tag: "Support",
-    title: "Wholesale inquiry path",
-    text: "The site is designed to capture product intent and route it into a lead workflow."
-  },
-  {
-    tag: "Growth",
-    title: "Expandable content stack",
-    text: "Ready to scale into SEO pages, campaigns, and future backend-driven management."
-  }
-];
+export const defaultBrandStoryContent: BrandStoryContent = {
+  metaTitle: "Brand Story | MaxPlus Sporting Goods",
+  metaDescription:
+    "Learn how MaxPlus positions its sporting goods catalog for retail, wholesale, and category growth.",
+  heroEyebrow: "Brand Story",
+  heroTitle: "About MaxPlus",
+  heroText:
+    "Built for U.S.-focused retail, club programs, and everyday play with a cleaner route from first impression to product confidence.",
+  storyParagraphs: [
+    "MaxPlus is positioned as a practical sporting goods brand for U.S.-focused retail, school, club, and active-family demand.",
+    "The site direction emphasizes credibility, fast product reading, and a cleaner route from discovery to inquiry.",
+    "Instead of feeling like a one-product landing page, the experience is designed to read as a structured commercial brand with category depth."
+  ],
+  stats: [
+    { id: "brand-stat-1", value: "4", label: "core product families" },
+    { id: "brand-stat-2", value: "8", label: "launch-ready catalog products" },
+    { id: "brand-stat-3", value: "3", label: "lead capture paths" }
+  ],
+  highlights: [
+    {
+      tag: "Capability",
+      title: "Multi-category catalog",
+      text: "Built to sell training, team-sport, outdoor, and recovery lines under one brand."
+    },
+    {
+      tag: "Workflow",
+      title: "Retail-ready presentation",
+      text: "Structured for buyers who need quick product clarity and credible brand signals."
+    },
+    {
+      tag: "Support",
+      title: "Wholesale inquiry path",
+      text: "The site is designed to capture product intent and route it into a lead workflow."
+    },
+    {
+      tag: "Growth",
+      title: "Expandable content stack",
+      text: "Ready to scale into SEO pages, campaigns, and future backend-driven management."
+    }
+  ],
+  categoryEyebrow: "Product Families",
+  categoryTitle: "Built to scale across multiple sports-driven buying needs.",
+  categoryText:
+    "Each category is maintained from the product classification system and can be presented here as part of the brand story."
+};
 
-export const aboutStory = [
-  "MaxPlus is positioned as a practical sporting goods brand for U.S.-focused retail, school, club, and active-family demand.",
-  "The site direction emphasizes credibility, fast product reading, and a cleaner route from discovery to inquiry.",
-  "Instead of feeling like a one-product landing page, the experience is designed to read as a structured commercial brand with category depth."
-];
-
-export const aboutStats = [
-  { value: "4", label: "core product families" },
-  { value: "8", label: "launch-ready catalog products" },
-  { value: "3", label: "lead capture paths" }
-];
+export const aboutHighlights: HighlightItem[] = defaultBrandStoryContent.highlights;
+export const aboutStory = defaultBrandStoryContent.storyParagraphs;
+export const aboutStats = defaultBrandStoryContent.stats;
 
 export const contactChannels: ContactChannel[] = [
   { label: "Business Email", value: "hello@maxplus-sport.com", href: "mailto:hello@maxplus-sport.com" },
@@ -762,7 +879,7 @@ export const searchSuggestions: SearchSuggestion[] = [
 ];
 
 export const footerQuickLinks: SearchSuggestion[] = [
-  { label: "About", href: "/about" },
+  { label: "Brand Story", href: "/brand-story" },
   { label: "Search", href: "/search" },
   { label: "Contact", href: "/contact" },
   { label: "Wholesale Buy", href: "/buy" }

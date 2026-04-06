@@ -44,14 +44,14 @@ usePageMeta({
     </div>
   </section>
 
-  <section class="section catalog-zone">
+  <section class="section catalog-zone buy-picks-zone">
     <div class="shell">
       <div class="section-heading reveal" v-reveal>
         <p class="eyebrow">Buyer Picks</p>
         <h2>Start from the products most often used as lead-entry items.</h2>
       </div>
 
-      <CatalogProductGrid :products="catalogProducts.filter((item) => item.featured)" />
+      <CatalogProductGrid :products="catalogProducts.filter((item) => item.featured)" variant="compact" />
     </div>
   </section>
 </template>

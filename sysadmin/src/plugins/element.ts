@@ -16,7 +16,8 @@ import {
   ElSwitch,
   ElTable,
   ElTableColumn,
-  ElTag
+  ElTag,
+  ElTreeSelect
 } from "element-plus";
 
 import "element-plus/es/components/button/style/css";
@@ -37,6 +38,7 @@ import "element-plus/es/components/switch/style/css";
 import "element-plus/es/components/table/style/css";
 import "element-plus/es/components/table-column/style/css";
 import "element-plus/es/components/tag/style/css";
+import "element-plus/es/components/tree-select/style/css";
 
 const components = [
   ElButton,
@@ -55,7 +57,8 @@ const components = [
   ElSwitch,
   ElTable,
   ElTableColumn,
-  ElTag
+  ElTag,
+  ElTreeSelect
 ];
 
 export function installElement(app: App) {

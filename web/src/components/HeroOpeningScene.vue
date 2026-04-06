@@ -8,11 +8,15 @@ const props = withDefaults(
     brand?: string;
     duration?: number;
     impactTime?: number;
+    persistAtEnd?: boolean;
+    showSkip?: boolean;
   }>(),
   {
     brand: "MAXPLUS",
     duration: 3.55,
-    impactTime: 1.52
+    impactTime: 1.52,
+    persistAtEnd: false,
+    showSkip: true
   }
 );
 
@@ -28,6 +32,7 @@ const flashOpacity = ref(0);
 const shockwaveOpacity = ref(0);
 const shockwaveProgress = ref(0);
 const brandProgress = ref(0);
+const hasSettled = ref(false);
 
 let isFinished = false;
 let cleanupScene: (() => void) | null = null;
@@ -141,7 +146,14 @@ function finishOpening() {
   }
 
   isFinished = true;
-  stopOpening();
+  hasSettled.value = true;
+
+  if (props.persistAtEnd) {
+    cancelScheduledTimers();
+  } else {
+    stopOpening();
+  }
+
   emit("complete");
 }
 
@@ -386,6 +398,7 @@ async function startThreeSequence() {
     setRendererSize();
     updateEntryCurve();
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth <= MOBILE_BREAKPOINT ? 1.35 : 1.8));
+    renderer.render(scene, camera);
   };
 
   setRendererSize();
@@ -440,7 +453,8 @@ async function startThreeSequence() {
   };
 
   const animate = (now: number) => {
-    const elapsed = Math.min((now - startTime) / 1000, props.duration);
+    const rawElapsed = (now - startTime) / 1000;
+    const elapsed = Math.min(rawElapsed, props.duration);
     const delta = Math.min((now - previousTime) / 1000, 0.04);
     previousTime = now;
 
@@ -477,9 +491,14 @@ async function startThreeSequence() {
       ballRig.scale.setScalar(lerp(1.06, 0.9, settleEase));
     }
 
-    ballRig.rotation.x = -0.58 + elapsed * 3.5 + travel * 12.2;
-    ballRig.rotation.y = 0.24 + elapsed * 2.78 + travel * 10.6;
-    ballRig.rotation.z = -0.18 + elapsed * 1.84 + travel * 7.2;
+    const settledSpinElapsed = Math.max(0, rawElapsed - props.duration);
+    const settledSpinX = settledSpinElapsed * 1.4;
+    const settledSpinY = settledSpinElapsed * 1.96;
+    const settledSpinZ = settledSpinElapsed * 0.88;
+
+    ballRig.rotation.x = -0.58 + elapsed * 3.5 + travel * 12.2 + settledSpinX;
+    ballRig.rotation.y = 0.24 + elapsed * 2.78 + travel * 10.6 + settledSpinY;
+    ballRig.rotation.z = -0.18 + elapsed * 1.84 + travel * 7.2 + settledSpinZ;
     ballMaterial.emissiveIntensity = 0.42 + impactPulse * 0.78;
 
     for (let index = trailHistory.length - 1; index > 0; index -= 1) {
@@ -498,8 +517,8 @@ async function startThreeSequence() {
       trailMaterial.opacity = Math.max(0, 0.24 - index * 0.03) * (0.4 + travel * 0.9) * (1 - brandReveal * 0.58);
     });
 
-    dust.rotation.z += delta * 0.05;
-    dust.rotation.y += delta * 0.03;
+    dust.rotation.z += delta * (rawElapsed > props.duration ? 0.018 : 0.05);
+    dust.rotation.y += delta * (rawElapsed > props.duration ? 0.012 : 0.03);
 
     if (!impactTriggered && elapsed >= impactTime) {
       impactTriggered = true;
@@ -546,9 +565,12 @@ async function startThreeSequence() {
 
     renderer.render(scene, camera);
 
-    if (elapsed >= props.duration) {
+    if (rawElapsed >= props.duration) {
       finishOpening();
-      return;
+
+      if (!props.persistAtEnd) {
+        return;
+      }
     }
 
     frameId = window.requestAnimationFrame(animate);
@@ -928,7 +950,13 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="hero-opening" :class="[`hero-opening--${mode}`]">
+  <div
+    class="hero-opening"
+    :class="[
+      `hero-opening--${mode}`,
+      { 'hero-opening--persist': props.persistAtEnd, 'hero-opening--settled': hasSettled }
+    ]"
+  >
     <div class="hero-opening__background">
       <div class="hero-opening__arena"></div>
       <div class="hero-opening__spotlights"></div>
@@ -950,6 +978,13 @@ onBeforeUnmount(() => {
       </strong>
     </div>
 
-    <button class="hero-opening__skip" type="button" @click="handleSkip">跳过动画</button>
+    <button
+      v-if="props.showSkip && !hasSettled"
+      class="hero-opening__skip"
+      type="button"
+      @click="handleSkip"
+    >
+      Skip Intro
+    </button>
   </div>
 </template>

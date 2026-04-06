@@ -3,67 +3,106 @@ import { computed, ref, watch } from "vue";
 import PageBanner from "../components/PageBanner.vue";
 import { usePublicData } from "../composables/usePublicData";
 import { usePageMeta } from "../composables/usePageMeta";
-const { categories: catalogCategories, videos: tutorialVideos } = usePublicData();
+import type { VideoCategory } from "../types/catalog";
 
+const { videoCategories, videos: tutorialVideos } = usePublicData();
+
+const activeParentCategory = ref("all");
 const activeCategory = ref("all");
-const activeTopic = ref("all");
 
-const categoryOptions = computed(() =>
-  catalogCategories.value.filter((category) =>
-    tutorialVideos.value.some((video) => video.categorySlug === category.slug)
-  )
-);
+const videoCategoryMap = computed(() => new Map(videoCategories.value.map((category) => [category.slug, category])));
 
-const topicOptions = computed(() => {
-  const source = tutorialVideos.value.filter((video) =>
-    activeCategory.value === "all" ? true : video.categorySlug === activeCategory.value
+const primaryCategoryOptions = computed(() => {
+  const parentTitlesWithVideos = new Set(
+    videoCategories.value
+      .filter(
+        (category) =>
+          Boolean(category.parentTitle) &&
+          tutorialVideos.value.some((video) => video.categorySlug === category.slug)
+      )
+      .map((category) => category.parentTitle as string)
   );
 
-  return Array.from(
-    new Map(
-      source.map((video) => [
-        video.topicSlug,
-        { slug: video.topicSlug, label: video.topicLabel }
-      ])
-    ).values()
+  return videoCategories.value.filter(
+    (category) => !category.parentTitle && parentTitlesWithVideos.has(category.title)
+  );
+});
+
+const activeParentTitle = computed(() =>
+  primaryCategoryOptions.value.find((category) => category.slug === activeParentCategory.value)?.title ?? ""
+);
+
+const secondaryCategoryOptions = computed(() => {
+  if (!activeParentTitle.value) {
+    return [];
+  }
+
+  return videoCategories.value.filter(
+    (category) =>
+      category.parentTitle === activeParentTitle.value &&
+      tutorialVideos.value.some((video) => video.categorySlug === category.slug)
   );
 });
 
 const filteredVideos = computed(() =>
   tutorialVideos.value.filter((video) => {
-    if (activeCategory.value !== "all" && video.categorySlug !== activeCategory.value) {
+    if (activeParentCategory.value === "all") {
+      return true;
+    }
+
+    const videoCategory = videoCategoryMap.value.get(video.categorySlug);
+
+    if (!videoCategory || videoCategory.parentTitle !== activeParentTitle.value) {
       return false;
     }
 
-    if (activeTopic.value !== "all" && video.topicSlug !== activeTopic.value) {
-      return false;
+    if (activeCategory.value === "all") {
+      return true;
     }
 
-    return true;
+    return video.categorySlug === activeCategory.value;
   })
 );
 
-const featuredVideo = computed(() => filteredVideos.value[0] ?? null);
-const libraryVideos = computed(() => filteredVideos.value.slice(1));
-
 const activeCategoryLabel = computed(() => {
-  if (activeCategory.value === "all") {
+  if (activeParentCategory.value === "all") {
     return "All Categories";
   }
 
-  return categoryOptions.value.find((item) => item.slug === activeCategory.value)?.title ?? "All Categories";
+  if (activeCategory.value !== "all") {
+    const secondary = secondaryCategoryOptions.value.find((item) => item.slug === activeCategory.value);
+
+    if (secondary) {
+      return `${activeParentTitle.value} / ${secondary.title}`;
+    }
+  }
+
+  return activeParentTitle.value || "All Categories";
 });
 
-const getCategoryLabel = (slug: string) =>
-  categoryOptions.value.find((item) => item.slug === slug)?.title ?? "Videos";
+const getCategoryLabel = (slug: string) => {
+  const category = videoCategoryMap.value.get(slug);
 
-watch(activeCategory, () => {
-  activeTopic.value = "all";
+  if (!category) {
+    return "Videos";
+  }
+
+  return category.parentTitle ? `${category.parentTitle} / ${category.title}` : category.title;
+};
+
+const getMediaStyle = (imageUrl?: string) => ({
+  backgroundImage: `linear-gradient(180deg, rgba(8, 18, 31, 0.12), rgba(8, 18, 31, 0.52)), url(${imageUrl})`
+});
+
+const getVideoLink = (slug: string) => `/videos/${encodeURIComponent(slug)}`;
+
+watch(activeParentCategory, () => {
+  activeCategory.value = "all";
 });
 
 usePageMeta({
   title: "Videos | MaxPlus Sporting Goods",
-  description: "Watch MaxPlus tutorial videos with expandable category and secondary topic filtering."
+  description: "Browse MaxPlus tutorial videos in a grid layout and open each guide on its own playback page."
 });
 </script>
 
@@ -78,14 +117,40 @@ usePageMeta({
           <div class="video-library__chips">
             <button
               type="button"
-              :class="['video-library__chip', { 'is-active': activeCategory === 'all' }]"
-              @click="activeCategory = 'all'"
+              :class="['video-library__chip', { 'is-active': activeParentCategory === 'all' }]"
+              @click="activeParentCategory = 'all'"
             >
               All Videos
             </button>
 
             <button
-              v-for="item in categoryOptions"
+              v-for="item in primaryCategoryOptions"
+              :key="item.slug"
+              type="button"
+              :class="['video-library__chip', { 'is-active': activeParentCategory === item.slug }]"
+              @click="activeParentCategory = item.slug"
+            >
+              {{ item.title }}
+            </button>
+          </div>
+        </div>
+
+        <div
+          v-if="activeParentCategory !== 'all' && secondaryCategoryOptions.length"
+          class="video-library__filter-group"
+        >
+          <span>Subcategory</span>
+          <div class="video-library__chips">
+            <button
+              type="button"
+              :class="['video-library__chip', { 'is-active': activeCategory === 'all' }]"
+              @click="activeCategory = 'all'"
+            >
+              All In {{ activeParentTitle }}
+            </button>
+
+            <button
+              v-for="item in secondaryCategoryOptions"
               :key="item.slug"
               type="button"
               :class="['video-library__chip', { 'is-active': activeCategory === item.slug }]"
@@ -96,90 +161,48 @@ usePageMeta({
           </div>
         </div>
 
-        <div class="video-library__filter-group">
-          <span>Topic</span>
-          <div class="video-library__chips">
-            <button
-              type="button"
-              :class="['video-library__chip', { 'is-active': activeTopic === 'all' }]"
-              @click="activeTopic = 'all'"
-            >
-              All Topics
-            </button>
-
-            <button
-              v-for="item in topicOptions"
-              :key="item.slug"
-              type="button"
-              :class="['video-library__chip', { 'is-active': activeTopic === item.slug }]"
-              @click="activeTopic = item.slug"
-            >
-              {{ item.label }}
-            </button>
-          </div>
-        </div>
-
         <div class="video-library__meta">
           <strong>{{ filteredVideos.length }}</strong>
           <span>{{ activeCategoryLabel }}</span>
         </div>
       </div>
 
-      <template v-if="featuredVideo">
-        <div class="video-library__hero">
-          <article class="video-feature reveal" v-reveal>
-            <div :class="['video-feature__media', featuredVideo.visualClass]">
-              <span class="video-feature__eyebrow">{{ featuredVideo.tag }}</span>
-              <span class="video-feature__play" aria-hidden="true">▶</span>
-              <span class="video-feature__duration">{{ featuredVideo.duration }}</span>
-            </div>
-
-            <div class="video-feature__body">
-              <div>
-                <div class="video-library__labels">
-                  <span class="video-card__tag">{{ getCategoryLabel(featuredVideo.categorySlug) }}</span>
-                  <span class="video-library__topic">{{ featuredVideo.topicLabel }}</span>
-                </div>
-                <h3>{{ featuredVideo.title }}</h3>
-                <p>{{ featuredVideo.summary }}</p>
-              </div>
-
-              <RouterLink class="video-feature__cta" to="/buy">
-                Use In Wholesale Flow
-              </RouterLink>
-            </div>
-          </article>
-        </div>
-
-        <div v-if="libraryVideos.length" class="video-library__grid">
-          <article
-            v-for="item in libraryVideos"
-            :key="item.slug"
-            class="video-card reveal"
-            v-reveal
+      <div v-if="filteredVideos.length" class="video-library__grid">
+        <RouterLink
+          v-for="item in filteredVideos"
+          :key="item.slug"
+          :to="getVideoLink(item.slug)"
+          class="video-card reveal"
+          v-reveal
+        >
+          <div
+            v-if="item.coverImage"
+            class="video-card__media video-card__media--photo"
+            :style="getMediaStyle(item.coverImage)"
           >
-            <div :class="['video-card__media', item.visualClass]">
-              <span class="video-card__play" aria-hidden="true">▶</span>
-              <span class="video-card__duration">{{ item.duration }}</span>
-            </div>
+            <span class="video-card__play" aria-hidden="true">▶</span>
+            <span class="video-card__duration">{{ item.duration }}</span>
+          </div>
+          <div v-else :class="['video-card__media', item.visualClass]">
+            <span class="video-card__play" aria-hidden="true">▶</span>
+            <span class="video-card__duration">{{ item.duration }}</span>
+          </div>
 
-            <div class="video-card__body">
-              <div class="video-library__labels">
-                <p class="video-card__tag">
-                  {{ getCategoryLabel(item.categorySlug) }}
-                </p>
-                <span class="video-library__topic">{{ item.topicLabel }}</span>
-              </div>
-              <h3>{{ item.title }}</h3>
-              <p>{{ item.summary }}</p>
+          <div class="video-card__body">
+            <div class="video-library__labels">
+              <p class="video-card__tag">{{ getCategoryLabel(item.categorySlug) }}</p>
+              <span v-if="item.topicLabel" class="video-library__topic">{{ item.topicLabel }}</span>
             </div>
-          </article>
-        </div>
-      </template>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.summary }}</p>
+            <span class="video-card__cta-link">Watch Video</span>
+          </div>
+        </RouterLink>
+      </div>
 
       <div v-else class="catalog-empty reveal is-visible">
         <h3>No videos in this filter.</h3>
-        <p>Try another category or topic to find the corresponding tutorial.</p>
+        <p>Try another video category to find the corresponding tutorial.</p>
       </div>
     </div>
   </section>

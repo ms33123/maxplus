@@ -14,6 +14,10 @@ export const siteContent: SiteContent = {
     description:
       "Multi-page sporting goods brand site with product catalog, category pages, tutorials, inquiry flows, and policy pages."
   },
+  theme: {
+    preset: "default",
+    effectsEnabled: true
+  },
   header: {
     navLabel: "Main navigation",
     logoLabel: "MaxPlus home",
@@ -22,6 +26,7 @@ export const siteContent: SiteContent = {
     ctaLabel: "Go To Buy",
     links: [
       { href: "/", label: "Home" },
+      { href: "/brand-story", label: "Brand Story" },
       { href: "/videos", label: "Videos" },
       { href: "/products", label: "Products" },
       { href: "/blog", label: "Blog" }
@@ -40,7 +45,7 @@ export const siteContent: SiteContent = {
           "A broader homepage direction for training gear, team sports, outdoor recreation, and active family use across the U.S.",
         actions: [
           { href: "/products", label: "Explore Products", kind: "primary" },
-          { href: "/about", label: "Brand Story", kind: "ghost" }
+          { href: "/brand-story", label: "Brand Story", kind: "ghost" }
         ],
         panel: {
           type: "stack",
@@ -97,11 +102,14 @@ export const siteContent: SiteContent = {
     eyebrow: "Video Guides",
     title: "Tutorial Videos",
     text: "",
+    moreLabel: "More Videos",
     featured: {
       eyebrow: tutorialVideos[0].tag,
       title: tutorialVideos[0].title,
       duration: tutorialVideos[0].duration,
-      href: "/videos",
+      href: `/videos/${tutorialVideos[0].slug}`,
+      videoUrl: tutorialVideos[0].videoUrl,
+      coverImage: tutorialVideos[0].coverImage,
       ctaLabel: "Watch Tutorial",
       visualClass: tutorialVideos[0].visualClass
     },
@@ -109,7 +117,9 @@ export const siteContent: SiteContent = {
       tag: item.tag,
       title: item.title,
       duration: item.duration,
-      href: "/videos",
+      href: `/videos/${item.slug}`,
+      videoUrl: item.videoUrl,
+      coverImage: item.coverImage,
       visualClass: item.visualClass
     }))
   },
@@ -118,22 +128,14 @@ export const siteContent: SiteContent = {
     title: "Featured Products",
     text: "",
     detailsLabel: "View Details",
-    items: catalogProducts
-      .filter((item) => item.featured)
-      .slice(0, 4)
-      .map((item) => ({
-        tag: item.tag,
-        title: item.title,
-        text: item.summary,
-        price: item.price,
-        href: `/products/${item.slug}`,
-        visualClass: item.visualClass
-      }))
+    moreLabel: "More Products",
+    items: catalogProducts.filter((item) => item.featured).slice(0, 4)
   },
   categories: {
     eyebrow: "Category Layout",
     title: "A homepage that can scale across multiple sports categories.",
     text: "",
+    moreLabel: "More Categories",
     items: catalogCategories.map((item) => ({
       title: item.title,
       text: item.summary,
@@ -210,16 +212,96 @@ export const siteContent: SiteContent = {
     eyebrow: "Feedback",
     title: "Feedback",
     text: "",
+    successMessage: "Thanks. We will get back to you soon.",
+    formFields: [
+      {
+        id: "contact-field-name",
+        key: "name",
+        type: "text",
+        label: "Name",
+        placeholder: "Your name",
+        enabled: true,
+        required: true,
+        options: []
+      },
+      {
+        id: "contact-field-email",
+        key: "email",
+        type: "email",
+        label: "Email",
+        placeholder: "name@email.com",
+        enabled: true,
+        required: true,
+        options: []
+      },
+      {
+        id: "contact-field-phone",
+        key: "phone",
+        type: "tel",
+        label: "Phone",
+        placeholder: "Your phone number",
+        enabled: false,
+        required: false,
+        options: []
+      },
+      {
+        id: "contact-field-company",
+        key: "company",
+        type: "text",
+        label: "Company",
+        placeholder: "Your company name",
+        enabled: false,
+        required: false,
+        options: []
+      },
+      {
+        id: "contact-field-interest",
+        key: "interest",
+        type: "select",
+        label: "Main Interest",
+        placeholder: "Choose one",
+        enabled: true,
+        required: true,
+        options: [
+          { value: "team-sports", label: "Team sports" },
+          { value: "training", label: "Training gear" },
+          { value: "outdoor-play", label: "Outdoor play" },
+          { value: "mixed", label: "Mixed product range" }
+        ]
+      },
+      {
+        id: "contact-field-message",
+        key: "message",
+        type: "textarea",
+        label: "Message",
+        placeholder: "Tell us what style or product direction you want to keep.",
+        enabled: true,
+        required: true,
+        options: []
+      }
+    ],
     fields: {
       nameLabel: "Name",
       namePlaceholder: "Your name",
       emailLabel: "Email",
       emailPlaceholder: "name@email.com",
+      phoneLabel: "Phone",
+      phonePlaceholder: "Your phone number",
+      companyLabel: "Company",
+      companyPlaceholder: "Your company name",
       interestLabel: "Main Interest",
       chooseOne: "Choose one",
       messageLabel: "Message",
       messagePlaceholder: "Tell us what style or product direction you want to keep.",
       submitLabel: "Send Feedback"
+    },
+    fieldConfig: {
+      name: { enabled: true, required: true },
+      email: { enabled: true, required: true },
+      phone: { enabled: false, required: false },
+      company: { enabled: false, required: false },
+      interest: { enabled: true, required: true },
+      message: { enabled: true, required: true }
     },
     interestOptions: [
       { value: "team-sports", label: "Team sports" },
@@ -252,20 +334,42 @@ export const siteContent: SiteContent = {
     meta2: "Built for catalog display, wholesale leads, and content growth."
   },
   subscribe: {
+    enabled: true,
+    stylePreset: "classic-gift",
     toggleLabel: "Subscribe For Perks",
     eyebrow: "Member Benefits",
     title: "Subscribe with your email and order number.",
-    emailLabel: "Email",
-    emailPlaceholder: "Email address",
-    orderLabel: "Order Number",
-    orderPlaceholder: "Order number",
+    text: "Use the popup to collect after-sales updates, member offers, and restock notices.",
     benefitsTitle: "After subscribing you can receive:",
     benefits: [
       "Early access to new product drops and restock alerts.",
       "Order-based after-sales updates and tutorial reminders.",
       "Member-only coupons and selected seasonal offers."
     ],
-    buttonLabel: "Subscribe",
-    demoStatus: "Demo mode only. The form is styled and ready for later integration."
+    submitLabel: "Subscribe",
+    successMessage: "Subscription received. Please check your email inbox.",
+    sourceLabel: "Website Subscribe Widget",
+    formFields: [
+      {
+        id: "subscribe-field-email",
+        key: "email",
+        type: "email",
+        label: "Email",
+        placeholder: "Email address",
+        enabled: true,
+        required: true,
+        options: []
+      },
+      {
+        id: "subscribe-field-order-number",
+        key: "order_number",
+        type: "text",
+        label: "Order Number",
+        placeholder: "Order number",
+        enabled: true,
+        required: true,
+        options: []
+      }
+    ]
   }
 };

@@ -16,11 +16,16 @@ const createDraft = (): BlogRecord => ({
   id: "",
   title: "",
   slug: "",
+  categoryId: "",
   category: "",
   author: "",
   status: "draft",
   publishDate: new Date().toISOString().slice(0, 10),
-  excerpt: ""
+  excerpt: "",
+  body: [],
+  bodyHtml: "",
+  coverImage: "",
+  meta: ""
 });
 
 const draft = reactive<BlogRecord>(createDraft());

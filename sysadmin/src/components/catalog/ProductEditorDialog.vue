@@ -29,6 +29,13 @@ const createDraft = (): ProductRecord => ({
   gallery: [],
   summary: "",
   description: "",
+  tagLabel: "",
+  orderMinimum: "",
+  leadTime: "",
+  sportType: "",
+  audience: "",
+  useCase: "",
+  visualClass: "",
   buyButtonLabel: "Go To Buy",
   buyButtonUrl: "/buy"
 });
@@ -64,7 +71,8 @@ watch(
 
 const close = () => emit("update:modelValue", false);
 
-const submit = () => {
+const submitWithStatus = (status: ProductRecord["status"]) => {
+  draft.status = status;
   emit("save", {
     ...draft,
     id: draft.id || `prd-${Date.now()}`
@@ -118,22 +126,50 @@ const submit = () => {
         </el-form-item>
       </div>
 
-      <div class="editor-grid editor-grid--2">
-        <el-form-item label="重量">
-          <el-input v-model="draft.weight" />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="draft.status">
-            <el-option label="草稿" value="draft" />
-            <el-option label="已发布" value="published" />
-            <el-option label="已归档" value="archived" />
-          </el-select>
-        </el-form-item>
-      </div>
+      <el-form-item label="重量">
+        <el-input v-model="draft.weight" />
+      </el-form-item>
 
       <el-form-item label="标签">
         <el-input v-model="tagsText" placeholder="多个标签请用英文逗号分隔" />
       </el-form-item>
+
+      <div class="editor-block">
+        <p class="page-card__eyebrow">前台商品卡片</p>
+
+        <div class="editor-grid editor-grid--2">
+          <el-form-item label="卡片标签">
+            <el-input v-model="draft.tagLabel" placeholder="如：Best Seller" />
+          </el-form-item>
+          <el-form-item label="视觉类名">
+            <el-input
+              v-model="draft.visualClass"
+              placeholder="如：product-card__visual--net"
+            />
+          </el-form-item>
+        </div>
+
+        <div class="editor-grid editor-grid--3">
+          <el-form-item label="运动类型">
+            <el-input v-model="draft.sportType" placeholder="如：Volleyball" />
+          </el-form-item>
+          <el-form-item label="受众">
+            <el-input v-model="draft.audience" placeholder="如：Club / Family" />
+          </el-form-item>
+          <el-form-item label="用途">
+            <el-input v-model="draft.useCase" placeholder="如：Outdoor Setup" />
+          </el-form-item>
+        </div>
+
+        <div class="editor-grid editor-grid--2">
+          <el-form-item label="起订量">
+            <el-input v-model="draft.orderMinimum" placeholder="如：24 sets" />
+          </el-form-item>
+          <el-form-item label="交期">
+            <el-input v-model="draft.leadTime" placeholder="如：10-15 business days" />
+          </el-form-item>
+        </div>
+      </div>
 
       <el-form-item label="主图地址">
         <el-input v-model="draft.heroImage" />
@@ -168,7 +204,13 @@ const submit = () => {
 
     <template #footer>
       <el-button @click="close">取消</el-button>
-      <el-button type="primary" @click="submit">保存商品</el-button>
+      <el-button v-if="product" @click="submitWithStatus('archived')">归档商品</el-button>
+      <el-button @click="submitWithStatus('draft')">
+        {{ product ? "保存草稿" : "创建草稿" }}
+      </el-button>
+      <el-button type="primary" @click="submitWithStatus('published')">
+        {{ product ? "发布更新" : "发布商品" }}
+      </el-button>
     </template>
   </el-dialog>
 </template>

@@ -39,6 +39,35 @@ const save = async () => {
       </div>
 
       <div class="stack-grid">
+        <div class="editor-grid editor-grid--2">
+          <el-input
+            v-model="settingsStore.homeContent.videoSection.eyebrow"
+            placeholder="模块眉标"
+          />
+          <el-input
+            v-model="settingsStore.homeContent.videoSection.title"
+            placeholder="模块标题"
+          />
+        </div>
+
+        <el-input
+          v-model="settingsStore.homeContent.videoSection.text"
+          type="textarea"
+          :rows="2"
+          placeholder="模块说明文案"
+        />
+
+        <div class="editor-grid editor-grid--2">
+          <el-input
+            v-model="settingsStore.homeContent.videoSection.featuredCtaLabel"
+            placeholder="主视频按钮文案"
+          />
+          <el-input
+            v-model="settingsStore.homeContent.videoSection.moreLabel"
+            placeholder="右侧更多按钮文案"
+          />
+        </div>
+
         <el-form-item label="首页展示视频">
           <el-select
             v-model="settingsStore.homeContent.featuredVideoSlugs"

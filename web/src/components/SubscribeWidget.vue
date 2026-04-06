@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { apiPost } from "../services/http";
+import SubscribeClassicButton from "./SubscribeClassicButton.vue";
+import SubscribeGiftButton from "./SubscribeGiftButton.vue";
 import type { SubscribeContent } from "../types/content";
-
-interface SubscribeFormState {
-  email: string;
-  orderNumber: string;
-}
 
 const props = defineProps<{
   subscribe: SubscribeContent;
@@ -15,22 +12,55 @@ const props = defineProps<{
 const isOpen = ref(false);
 const isSubmitting = ref(false);
 const status = ref("");
-const form = reactive<SubscribeFormState>({
-  email: "",
-  orderNumber: ""
-});
+const formValues = reactive<Record<string, string>>({});
+
+const enabledFields = computed(() =>
+  props.subscribe.formFields.filter((field) => field.enabled)
+);
 
 const reset = () => {
-  form.email = "";
-  form.orderNumber = "";
+  enabledFields.value.forEach((field) => {
+    formValues[field.key] = "";
+  });
 };
 
-const togglePanel = (): void => {
-  isOpen.value = !isOpen.value;
+const panelId = "subscribe-panel-sporting";
+const isClassicButton = computed(() => props.subscribe.stylePreset === "classic-button");
+const giftStylePreset = computed(() =>
+  props.subscribe.stylePreset === "classic-button" ? "classic-gift" : props.subscribe.stylePreset
+);
+
+const openPanel = (): void => {
+  status.value = "";
+  isOpen.value = true;
 };
 
 const closePanel = (): void => {
   isOpen.value = false;
+};
+
+const syncFormState = () => {
+  const activeKeys = new Set(enabledFields.value.map((field) => field.key));
+
+  Object.keys(formValues).forEach((key) => {
+    if (!activeKeys.has(key)) {
+      delete formValues[key];
+    }
+  });
+
+  enabledFields.value.forEach((field) => {
+    if (!(field.key in formValues)) {
+      formValues[field.key] = "";
+    }
+  });
+};
+
+const resolveInputType = (type: string) => {
+  if (type === "email" || type === "tel") {
+    return type;
+  }
+
+  return "text";
 };
 
 const submit = async () => {
@@ -41,15 +71,19 @@ const submit = async () => {
     await apiPost(
       "/public/subscribe",
       {
-        email: form.email,
-        orderNumber: form.orderNumber,
-        source: "Website Subscribe Widget"
+        source: props.subscribe.sourceLabel,
+        formFields: enabledFields.value.map((field) => ({
+          key: field.key,
+          label: field.label,
+          value: formValues[field.key] || "",
+          type: field.type
+        }))
       },
       {
         secure: true
       }
     );
-    status.value = "Subscription received. Thank you.";
+    status.value = props.subscribe.successMessage;
     reset();
   } catch (error) {
     status.value = error instanceof Error ? error.message : "Unable to subscribe right now.";
@@ -58,7 +92,18 @@ const submit = async () => {
   }
 };
 
+watch(enabledFields, syncFormState, {
+  deep: true,
+  immediate: true
+});
+
 onMounted(() => {
+  syncFormState();
+
+  if (!props.subscribe.enabled) {
+    return;
+  }
+
   if (!window.matchMedia("(max-width: 820px)").matches) {
     return;
   }
@@ -70,16 +115,43 @@ onMounted(() => {
       return;
     }
 
-    isOpen.value = true;
+    openPanel();
     window.sessionStorage.setItem(storageKey, "1");
   } catch {
-    isOpen.value = true;
+    openPanel();
   }
 });
 </script>
 
 <template>
-  <div :class="['subscribe-widget', { 'is-open': isOpen }]" id="newsletter-sporting">
+  <div
+    v-if="subscribe.enabled"
+    :class="[
+      'subscribe-widget',
+      `subscribe-widget--${subscribe.stylePreset}`,
+      { 'is-open': isOpen }
+    ]"
+    id="newsletter-sporting"
+  >
+    <SubscribeClassicButton
+      v-if="isClassicButton"
+      :controls-id="panelId"
+      :label="subscribe.toggleLabel"
+      :open="isOpen"
+      @open="openPanel"
+      @close="closePanel"
+    />
+
+    <SubscribeGiftButton
+      v-else
+      :controls-id="panelId"
+      :label="subscribe.toggleLabel"
+      :open="isOpen"
+      :style-preset="giftStylePreset"
+      @open="openPanel"
+      @close="closePanel"
+    />
+
     <button
       v-if="isOpen"
       class="subscribe-widget__backdrop"
@@ -88,17 +160,7 @@ onMounted(() => {
       @click="closePanel"
     ></button>
 
-    <button
-      class="subscribe-widget__toggle"
-      type="button"
-      :aria-expanded="isOpen"
-      aria-controls="subscribe-panel-sporting"
-      @click="togglePanel"
-    >
-      {{ subscribe.toggleLabel }}
-    </button>
-
-    <div class="subscribe-widget__panel" id="subscribe-panel-sporting">
+    <div class="subscribe-widget__panel" :id="panelId">
       <button
         class="subscribe-widget__close"
         type="button"
@@ -112,6 +174,7 @@ onMounted(() => {
         <div class="subscribe-widget__benefit-copy">
           <p class="eyebrow">{{ subscribe.eyebrow }}</p>
           <h3 class="subscribe-widget__title">{{ subscribe.title }}</h3>
+          <p v-if="subscribe.text" class="subscribe-widget__text">{{ subscribe.text }}</p>
           <p class="subscribe-widget__benefits-title">{{ subscribe.benefitsTitle }}</p>
 
           <ul class="subscribe-widget__benefits">
@@ -122,34 +185,49 @@ onMounted(() => {
         </div>
 
         <form class="subscribe-form" @submit.prevent="submit">
-          <label class="sr-only" for="subscribe-email-sporting">
-            {{ subscribe.emailLabel }}
-          </label>
+          <template v-for="field in enabledFields" :key="field.id">
+            <label class="sr-only" :for="field.id">
+              {{ field.label }}
+            </label>
 
-          <input
-            id="subscribe-email-sporting"
-            v-model="form.email"
-            type="email"
-            name="email"
-            :placeholder="subscribe.emailPlaceholder"
-            required
-          />
+            <select
+              v-if="field.type === 'select'"
+              :id="field.id"
+              v-model="formValues[field.key]"
+              :name="field.key"
+              :required="field.required"
+            >
+              <option value="">
+                {{ field.placeholder || field.label }}
+              </option>
+              <option v-for="option in field.options" :key="option.value" :value="option.value">
+                {{ option.label }}
+              </option>
+            </select>
 
-          <label class="sr-only" for="subscribe-order-sporting">
-            {{ subscribe.orderLabel }}
-          </label>
+            <textarea
+              v-else-if="field.type === 'textarea'"
+              :id="field.id"
+              v-model="formValues[field.key]"
+              :name="field.key"
+              :placeholder="field.placeholder"
+              :required="field.required"
+              rows="4"
+            ></textarea>
 
-          <input
-            id="subscribe-order-sporting"
-            v-model="form.orderNumber"
-            type="text"
-            name="orderNumber"
-            :placeholder="subscribe.orderPlaceholder"
-            required
-          />
+            <input
+              v-else
+              :id="field.id"
+              v-model="formValues[field.key]"
+              :type="resolveInputType(field.type)"
+              :name="field.key"
+              :placeholder="field.placeholder"
+              :required="field.required"
+            />
+          </template>
 
           <button class="button button--primary" type="submit" :disabled="isSubmitting">
-            {{ isSubmitting ? "Submitting..." : subscribe.buttonLabel }}
+            {{ isSubmitting ? "Submitting..." : subscribe.submitLabel }}
           </button>
 
           <p class="form-status" aria-live="polite">{{ status }}</p>

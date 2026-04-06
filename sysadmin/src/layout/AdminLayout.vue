@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import HeaderBar from "../components/layout/HeaderBar.vue";
+import RouteTabs from "../components/layout/RouteTabs.vue";
 import SidebarNav from "../components/layout/SidebarNav.vue";
 </script>
 
@@ -11,6 +12,7 @@ import SidebarNav from "../components/layout/SidebarNav.vue";
       <HeaderBar />
 
       <main class="admin-shell__content">
+        <RouteTabs />
         <RouterView />
       </main>
     </div>

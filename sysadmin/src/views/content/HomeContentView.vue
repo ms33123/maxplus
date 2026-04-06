@@ -16,9 +16,13 @@ const publishedVideos = computed(() =>
 
 const createHeroSlide = () => ({
   id: `hero-${Date.now()}`,
+  eyebrow: "",
   title: "",
   subtitle: "",
   targetUrl: "/products",
+  primaryLabel: "Explore Products",
+  secondaryLabel: "",
+  secondaryTargetUrl: "",
   imageUrl: "",
   enabled: true
 });

@@ -1,11 +1,23 @@
 <script setup lang="ts">
-import { reactive, watch } from "vue";
-import type { CategoryRecord, VideoRecord } from "../../types/admin";
+import { computed, reactive, watch } from "vue";
+import type { VideoCategoryRecord, VideoRecord } from "../../types/admin";
+
+interface VideoCategoryOption {
+  value: string;
+  label: string;
+  sortOrder: number;
+  children?: VideoCategoryOption[];
+}
+
+const treeSelectProps = {
+  label: "label",
+  children: "children"
+} as const;
 
 const props = defineProps<{
   modelValue: boolean;
   video: VideoRecord | null;
-  categories: CategoryRecord[];
+  categories: VideoCategoryRecord[];
 }>();
 
 const emit = defineEmits<{
@@ -17,7 +29,7 @@ const createDraft = (): VideoRecord => ({
   id: "",
   title: "",
   slug: "",
-  categoryId: props.categories[0]?.id ?? "",
+  categoryId: props.categories.find((item) => item.enabled)?.id ?? props.categories[0]?.id ?? "",
   topic: "",
   duration: "",
   status: "draft",
@@ -28,10 +40,69 @@ const createDraft = (): VideoRecord => ({
 
 const draft = reactive<VideoRecord>(createDraft());
 
+const categoryOptions = computed<VideoCategoryOption[]>(() => {
+  const optionMap = new Map<string, VideoCategoryOption & { parent: string }>();
+
+  for (const category of props.categories) {
+    optionMap.set(category.id, {
+      value: category.id,
+      label: category.name,
+      sortOrder: category.sortOrder,
+      parent: category.parent,
+      children: []
+    });
+  }
+
+  const roots: Array<VideoCategoryOption & { parent: string }> = [];
+
+  for (const option of optionMap.values()) {
+    if (!option.parent || option.parent === "顶级分类") {
+      roots.push(option);
+      continue;
+    }
+
+    const parent = Array.from(optionMap.values()).find((item) => item.label === option.parent);
+
+    if (parent) {
+      parent.children = parent.children || [];
+      parent.children.push(option);
+      continue;
+    }
+
+    roots.push(option);
+  }
+
+  const sortOptions = (items: Array<VideoCategoryOption & { parent: string }>): VideoCategoryOption[] =>
+    items
+      .sort((left, right) => left.sortOrder - right.sortOrder)
+      .map((item) => ({
+        value: item.value,
+        label: item.label,
+        sortOrder: item.sortOrder,
+        children: item.children?.length
+          ? sortOptions(item.children as Array<VideoCategoryOption & { parent: string }>)
+          : undefined
+      }));
+
+  return sortOptions(roots);
+});
+
 watch(
   () => props.video,
   (value) => {
     Object.assign(draft, value ?? createDraft());
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.categories,
+  (categories) => {
+    if (categories.some((item) => item.id === draft.categoryId)) {
+      return;
+    }
+
+    draft.categoryId = categories.find((item) => item.enabled)?.id ?? categories[0]?.id ?? "";
   },
   { immediate: true }
 );
@@ -66,14 +137,17 @@ const submit = () => {
 
       <div class="editor-grid editor-grid--3">
         <el-form-item label="所属分类">
-          <el-select v-model="draft.categoryId">
-            <el-option
-              v-for="category in categories"
-              :key="category.id"
-              :label="category.name"
-              :value="category.id"
-            />
-          </el-select>
+          <el-tree-select
+            v-model="draft.categoryId"
+            :data="categoryOptions"
+            :props="treeSelectProps"
+            node-key="value"
+            value-key="value"
+            check-strictly
+            default-expand-all
+            :render-after-expand="false"
+            placeholder="请选择视频分类"
+          />
         </el-form-item>
         <el-form-item label="主题标签">
           <el-input v-model="draft.topic" />
@@ -95,8 +169,14 @@ const submit = () => {
         </el-form-item>
       </div>
 
-      <el-form-item label="视频地址">
-        <el-input v-model="draft.videoUrl" />
+      <el-form-item label="视频外链地址">
+        <el-input
+          v-model="draft.videoUrl"
+          placeholder="支持 YouTube、Vimeo、Bilibili、直链 MP4 或可嵌入外链"
+        />
+        <div class="editor-form__hint">
+          填写 YouTube 的 watch、share、shorts 等外链时，前台会自动转成 iframe 嵌入播放。
+        </div>
       </el-form-item>
 
       <el-form-item label="视频摘要">
@@ -110,3 +190,12 @@ const submit = () => {
     </template>
   </el-dialog>
 </template>
+
+<style scoped>
+.editor-form__hint {
+  margin-top: 0.45rem;
+  color: var(--el-text-color-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+}
+</style>

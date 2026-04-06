@@ -42,6 +42,18 @@ router.post(
   asyncHandler(async (req, res) => {
     const payload = resolveRequestPayload(req);
     const data = await createSubscriber(payload);
+
+    await addLog({
+      type: "operation",
+      actor: data.email,
+      role: "support",
+      message: `新增前台订阅：${data.source}`,
+      metadata: {
+        source: data.source,
+        emailStatus: data.emailStatus
+      }
+    });
+
     return ok(res, data, "订阅提交成功。");
   })
 );

@@ -54,7 +54,7 @@ const matchedPosts = computed(() => {
   }
 
   return blogPosts.value.filter((item) =>
-    [item.title, item.excerpt, item.category]
+    [item.title, item.excerpt, item.category, item.author || "", ...item.body]
       .join(" ")
       .toLowerCase()
       .includes(query.value)
@@ -71,6 +71,8 @@ const submitSearch = () => {
     query: searchInput.value.trim() ? { q: searchInput.value.trim() } : {}
   });
 };
+
+const getBlogLink = (slug: string) => `/blog/${encodeURIComponent(slug)}`;
 
 usePageMeta(
   computed(() => ({
@@ -139,6 +141,7 @@ usePageMeta(
 
           <CatalogProductGrid
             :products="matchedProducts"
+            variant="compact"
             empty-title="No matching products."
             empty-text="Try a broader keyword or check the hot keywords below."
           />
@@ -151,9 +154,10 @@ usePageMeta(
           </div>
 
           <div class="blog-grid">
-            <article
+            <RouterLink
               v-for="post in matchedPosts"
               :key="post.slug"
+              :to="getBlogLink(post.slug)"
               class="blog-card reveal"
               v-reveal
             >
@@ -161,7 +165,8 @@ usePageMeta(
               <h3>{{ post.title }}</h3>
               <p>{{ post.excerpt }}</p>
               <span class="blog-card__meta">{{ post.meta }}</span>
-            </article>
+              <span class="blog-card__cta">Read Article</span>
+            </RouterLink>
           </div>
         </section>
 

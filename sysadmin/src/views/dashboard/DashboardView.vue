@@ -25,9 +25,17 @@ const publishedBlogs = computed(() =>
     <section class="page-card">
       <div class="page-card__header">
         <div>
-          <p class="page-card__eyebrow">数据概览</p>
+          <p class="page-card__eyebrow">运营概览</p>
           <h2>当前独立站后台的核心运营数据。</h2>
+          <p>从首页内容、商品、视频和线索四条线快速掌握当前站点状态。</p>
         </div>
+      </div>
+
+      <div class="dashboard-lead-tags">
+        <span>首页运营</span>
+        <span>商品中心</span>
+        <span>视频管理</span>
+        <span>线索管理</span>
       </div>
 
       <div class="stats-grid">

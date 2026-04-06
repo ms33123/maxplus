@@ -10,24 +10,29 @@ const adminRoutes = require("./routes/adminRoutes");
 const { notFoundHandler, errorHandler } = require("./middleware/errorHandler");
 
 function isPrivateNetworkHost(hostname) {
+  const normalizedHostname = String(hostname || "").trim().replace(/^\[|\]$/g, "");
+
   if (
-    hostname === "localhost" ||
-    hostname === "127.0.0.1" ||
-    hostname === "192.168.1.241:5173" ||
-    hostname === "::1"
+    normalizedHostname === "localhost" ||
+    normalizedHostname === "127.0.0.1" ||
+    normalizedHostname === "::1"
   ) {
     return true;
   }
 
-  if (/^10\.\d+\.\d+\.\d+$/.test(hostname)) {
+  if (/^10\.\d+\.\d+\.\d+$/.test(normalizedHostname)) {
     return true;
   }
 
-  if (/^192\.168\.\d+\.\d+$/.test(hostname)) {
+  if (/^192\.168\.\d+\.\d+$/.test(normalizedHostname)) {
     return true;
   }
 
-  if (/^172\.(1[6-9]|2\d|3[0-1])\.\d+\.\d+$/.test(hostname)) {
+  if (/^172\.(1[6-9]|2\d|3[0-1])\.\d+\.\d+$/.test(normalizedHostname)) {
+    return true;
+  }
+
+  if (/^169\.254\.\d+\.\d+$/.test(normalizedHostname)) {
     return true;
   }
 

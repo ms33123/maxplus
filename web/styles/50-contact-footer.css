@@ -1,0 +1,314 @@
+.contact-zone {
+  padding-bottom: 7rem;
+}
+
+.home-page > .section {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.home-page > .contact-zone {
+  padding-bottom: 30px;
+}
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: 1.2rem;
+}
+
+.contact-copy,
+.contact-form {
+  padding: 1.8rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(16, 33, 58, 0.08);
+}
+
+.contact-copy {
+  background:
+    radial-gradient(circle at 84% 18%, rgba(255, 106, 42, 0.12), transparent 18%),
+    rgba(255, 255, 255, 0.92);
+}
+
+.contact-copy h2 {
+  font-size: clamp(2.8rem, 5vw, 4.8rem);
+}
+
+.contact-copy p {
+  margin-top: 1rem;
+  color: var(--text-soft);
+}
+
+.contact-form label {
+  display: block;
+}
+
+.contact-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.contact-form__field--full {
+  grid-column: 1 / -1;
+}
+
+.contact-form label span {
+  display: inline-block;
+  margin-bottom: 0.45rem;
+  color: var(--navy);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.contact-form__grid + button,
+.contact-form > label + label,
+.contact-form .field-row + label,
+.contact-form label + button {
+  margin-top: 1rem;
+}
+
+.form-status {
+  min-height: 1.3rem;
+  margin: 0.75rem 0 0;
+  color: var(--orange);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.site-footer {
+  padding: 2rem 0 1.4rem;
+  color: rgba(255, 255, 255, 0.84);
+  background: linear-gradient(180deg, var(--navy) 0%, #0b1830 100%);
+}
+
+.footer-layout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.logo--footer .logo__mark {
+  box-shadow: none;
+}
+
+.logo--footer .logo__text strong,
+.logo--footer .logo__text small {
+  color: #fff;
+}
+
+.footer-brand {
+  max-width: 430px;
+}
+
+.footer-brand p {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(160px, 1fr));
+  gap: 1.4rem;
+}
+
+.footer-links strong {
+  display: block;
+  margin-bottom: 0.65rem;
+  color: #fff;
+}
+
+.footer-links a {
+  display: block;
+  margin-top: 0.45rem;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.footer-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.7rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.9rem;
+}
+
+.subscribe-widget {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 92;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.subscribe-widget__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  border: 0;
+  background: rgba(16, 33, 58, 0.18);
+  backdrop-filter: blur(2px);
+}
+
+.subscribe-widget__title {
+  font-size: 30px;
+}
+
+.subscribe-widget__text {
+  margin-top: 0.8rem;
+  color: var(--text-soft);
+}
+
+.subscribe-widget__benefits-title {
+  margin: 1rem 0 0;
+  color: var(--navy);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.subscribe-widget__benefits {
+  display: grid;
+  gap: 0.8rem;
+  padding: 0;
+  margin: 0.9rem 0 0;
+  list-style: none;
+}
+
+.subscribe-widget__benefits li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  color: var(--text-soft);
+}
+
+.subscribe-widget__benefits li::before {
+  content: "";
+  flex: 0 0 10px;
+  height: 10px;
+  margin-top: 0.45rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--subscribe-accent), var(--subscribe-accent-strong));
+}
+
+.subscribe-widget__panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  width: min(860px, calc(100vw - 2rem));
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(16, 33, 58, 0.08);
+  border-radius: 32px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, calc(-50% + 12px)) scale(0.97);
+  transform-origin: center;
+  box-shadow: var(--shadow-lg);
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.subscribe-widget.is-open .subscribe-widget__panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.subscribe-widget__close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.9rem;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--subscribe-accent-soft);
+  color: var(--subscribe-ink);
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.subscribe-widget__dialog {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+  gap: 1.2rem;
+  align-items: stretch;
+}
+
+.subscribe-widget__benefit-copy {
+  min-width: 0;
+  padding-right: 0.6rem;
+}
+
+.subscribe-form {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  padding: 1.25rem;
+  border-radius: 26px;
+  background: linear-gradient(180deg, rgba(244, 247, 251, 0.96), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(16, 33, 58, 0.08);
+}
+
+.subscribe-form textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
+.subscribe-widget .form-status {
+  color: var(--subscribe-accent-strong);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 600ms ease, transform 600ms ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+[lang^="zh"] body {
+  font-family: "Noto Sans SC", "Space Grotesk", sans-serif;
+}
+
+[lang^="zh"] .hero-slide h1,
+[lang^="zh"] .page-banner h1,
+[lang^="zh"] .section-heading h2,
+[lang^="zh"] .category-copy h2,
+[lang^="zh"] .contact-copy h2,
+[lang^="zh"] .subscribe-widget__title,
+[lang^="zh"] .video-feature h3,
+[lang^="zh"] .video-card h3,
+[lang^="zh"] .blog-card h3,
+[lang^="zh"] .buy-card h3,
+[lang^="zh"] .product-card h3,
+[lang^="zh"] .logo__text strong,
+[lang^="zh"] .highlight-card strong,
+[lang^="zh"] .category-card strong,
+[lang^="zh"] .review-card__quote,
+[lang^="zh"] .review-zone__summary strong,
+[lang^="zh"] .review-zone__summary-metric span,
+[lang^="zh"] .quote-card p,
+[lang^="zh"] .hero-stack__card,
+[lang^="zh"] .hero-metric strong {
+  font-family: "Noto Sans SC", "Barlow Condensed", sans-serif;
+  line-height: 1.15;
+}
+

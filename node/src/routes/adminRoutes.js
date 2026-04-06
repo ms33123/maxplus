@@ -6,18 +6,28 @@ const { resolveRequestPayload } = require("../utils/request");
 const {
   getSiteSettings,
   saveSiteSettings,
+  getSubscribePopup,
+  saveSubscribePopup,
   getHomeContent,
   saveHomeContent,
+  getBlogPage,
+  saveBlogPage,
+  getBrandStory,
+  saveBrandStory,
   getSeoSettings,
   saveSeoSettings
 } = require("../services/settingsService");
 const {
   getCatalogBundle,
   saveCategory,
+  saveVideoCategory,
+  saveBlogCategory,
   saveProduct,
   saveVideo,
   saveBlog,
   deleteCategory,
+  deleteVideoCategory,
+  deleteBlogCategory,
   deleteProduct,
   deleteVideo,
   deleteBlog
@@ -50,6 +60,9 @@ router.post(
       dashboard,
       siteSettings,
       homeContent,
+      subscribePopup,
+      brandStory,
+      blogPage,
       seoSettings,
       catalog,
       inquiries,
@@ -59,6 +72,9 @@ router.post(
       getDashboardSummary(),
       getSiteSettings(),
       getHomeContent(),
+      getSubscribePopup(),
+      getBrandStory(),
+      getBlogPage(),
       getSeoSettings(),
       getCatalogBundle(),
       listInquiries(),
@@ -70,6 +86,8 @@ router.post(
       dashboard,
       siteSettings,
       homeContent,
+      subscribePopup,
+      brandStory,
       seoSettings,
       ...catalog,
       inquiries,
@@ -104,6 +122,22 @@ router.post(
 );
 
 router.post(
+  "/subscribe-popup/get",
+  asyncHandler(async (req, res) => {
+    return ok(res, await getSubscribePopup());
+  })
+);
+
+router.post(
+  "/subscribe-popup/save",
+  asyncHandler(async (req, res) => {
+    const data = await saveSubscribePopup(resolveRequestPayload(req));
+    await writeOperationLog(req, "保存了订阅弹窗配置。");
+    return ok(res, data, "订阅弹窗配置已保存。");
+  })
+);
+
+router.post(
   "/home/get",
   asyncHandler(async (req, res) => {
     return ok(res, await getHomeContent());
@@ -116,6 +150,38 @@ router.post(
     const data = await saveHomeContent(resolveRequestPayload(req));
     await writeOperationLog(req, "保存了首页内容配置。");
     return ok(res, data, "首页内容已保存。");
+  })
+);
+
+router.post(
+  "/blog-page/get",
+  asyncHandler(async (req, res) => {
+    return ok(res, await getBlogPage());
+  })
+);
+
+router.post(
+  "/blog-page/save",
+  asyncHandler(async (req, res) => {
+    const data = await saveBlogPage(resolveRequestPayload(req));
+    await writeOperationLog(req, "保存了博客列表页配置。");
+    return ok(res, data, "博客页面配置已保存。");
+  })
+);
+
+router.post(
+  "/brand-story/get",
+  asyncHandler(async (req, res) => {
+    return ok(res, await getBrandStory());
+  })
+);
+
+router.post(
+  "/brand-story/save",
+  asyncHandler(async (req, res) => {
+    const data = await saveBrandStory(resolveRequestPayload(req));
+    await writeOperationLog(req, "保存了品牌故事页面内容。");
+    return ok(res, data, "品牌故事内容已保存。");
   })
 );
 
@@ -158,6 +224,44 @@ router.post(
     await deleteCategory(payload.id);
     await writeOperationLog(req, `删除分类：${payload.id}`);
     return ok(res, null, "分类已删除。");
+  })
+);
+
+router.post(
+  "/video-categories/save",
+  asyncHandler(async (req, res) => {
+    const data = await saveVideoCategory(resolveRequestPayload(req));
+    await writeOperationLog(req, `保存视频分类：${data.name}`);
+    return ok(res, data, "视频分类已保存。");
+  })
+);
+
+router.post(
+  "/video-categories/delete",
+  asyncHandler(async (req, res) => {
+    const payload = resolveRequestPayload(req);
+    await deleteVideoCategory(payload.id);
+    await writeOperationLog(req, `删除视频分类：${payload.id}`);
+    return ok(res, null, "视频分类已删除。");
+  })
+);
+
+router.post(
+  "/blog-categories/save",
+  asyncHandler(async (req, res) => {
+    const data = await saveBlogCategory(resolveRequestPayload(req));
+    await writeOperationLog(req, `保存文章分类：${data.name}`);
+    return ok(res, data, "文章分类已保存。");
+  })
+);
+
+router.post(
+  "/blog-categories/delete",
+  asyncHandler(async (req, res) => {
+    const payload = resolveRequestPayload(req);
+    await deleteBlogCategory(payload.id);
+    await writeOperationLog(req, `删除文章分类：${payload.id}`);
+    return ok(res, null, "文章分类已删除。");
   })
 );
 

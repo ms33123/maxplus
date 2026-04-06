@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
@@ -11,12 +10,18 @@ const groups = [
     items: [{ label: "仪表盘", path: "/dashboard" }]
   },
   {
-    key: "configuration",
-    label: "系统配置",
+    key: "homepage",
+    label: "首页运营",
     items: [
-      { label: "站点设置", path: "/settings/site" },
-      { label: "SEO 设置", path: "/seo" },
-      { label: "系统日志", path: "/system/logs" }
+      { label: "首页轮播", path: "/content/home/hero" },
+      { label: "首页产品", path: "/content/home/products" },
+      { label: "首页视频", path: "/content/home/videos" },
+      { label: "首页分类", path: "/content/home/categories" },
+      { label: "首页评价配置", path: "/content/home/reviews" },
+      { label: "评论内容管理", path: "/content/reviews/manage" },
+      { label: "首页联系", path: "/content/home/contact" },
+      { label: "订阅弹窗", path: "/content/home/subscribe" },
+      { label: "首页模块开关", path: "/content/modules" }
     ]
   },
   {
@@ -28,17 +33,25 @@ const groups = [
     ]
   },
   {
-    key: "content",
-    label: "内容运营",
+    key: "media",
+    label: "视频管理",
     items: [
       { label: "视频管理", path: "/media/videos" },
-      { label: "博客管理", path: "/content/blog" },
-      { label: "首页轮播", path: "/content/home/hero" },
-      { label: "首页产品", path: "/content/home/products" },
-      { label: "首页视频", path: "/content/home/videos" },
-      { label: "首页评价配置", path: "/content/home/reviews" },
-      { label: "评论内容管理", path: "/content/reviews/manage" },
-      { label: "首页模块开关", path: "/content/modules" }
+      { label: "视频分类", path: "/media/categories" }
+    ]
+  },
+  {
+    key: "content",
+    label: "内容管理",
+    items: [{ label: "品牌故事", path: "/content/brand-story" }]
+  },
+  {
+    key: "blog",
+    label: "博客管理",
+    items: [
+      { label: "文章列表", path: "/content/blog/posts" },
+      { label: "文章分类", path: "/content/blog/categories" },
+      { label: "博客页面", path: "/content/blog/settings" }
     ]
   },
   {
@@ -48,29 +61,31 @@ const groups = [
       { label: "询盘管理", path: "/crm/inquiries" },
       { label: "订阅管理", path: "/crm/subscribers" }
     ]
+  },
+  {
+    key: "configuration",
+    label: "系统配置",
+    items: [
+      { label: "站点设置", path: "/settings/site" },
+      { label: "邮件配置", path: "/settings/mailer" },
+      { label: "SEO 设置", path: "/seo" },
+      { label: "系统日志", path: "/system/logs" }
+    ]
   }
 ];
 
-const defaultOpeneds = computed(() => {
-  const activeGroup = groups.find((group) =>
-    group.items.some((item) => item.path === route.path)
-  );
-
-  return activeGroup ? [activeGroup.key] : ["overview"];
-});
 </script>
 
 <template>
   <aside class="sidebar-nav">
     <div class="sidebar-nav__brand">
       <strong>MAXPLUS</strong>
-      <span>后台管理系统</span>
+      <span class="sidebar-nav__brand-sub">后台管理系统</span>
     </div>
 
     <el-menu
       class="sidebar-nav__menu"
       :default-active="route.path"
-      :default-openeds="defaultOpeneds"
       unique-opened
       router
       background-color="transparent"
@@ -82,7 +97,11 @@ const defaultOpeneds = computed(() => {
         :key="group.key"
         :index="group.key"
       >
-        <template #title>{{ group.label }}</template>
+        <template #title>
+          <div class="sidebar-nav__group-line">
+            <span>{{ group.label }}</span>
+          </div>
+        </template>
 
         <el-menu-item
           v-for="item in group.items"

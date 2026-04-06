@@ -1,3 +1,5 @@
+import type { CatalogProduct } from "./catalog";
+
 export interface NavLink {
   href: string;
   label: string;
@@ -71,11 +73,33 @@ export interface HighlightItem {
   text: string;
 }
 
+export interface BrandStoryStat {
+  id: string;
+  value: string;
+  label: string;
+}
+
+export interface BrandStoryContent {
+  metaTitle: string;
+  metaDescription: string;
+  heroEyebrow: string;
+  heroTitle: string;
+  heroText: string;
+  storyParagraphs: string[];
+  stats: BrandStoryStat[];
+  highlights: HighlightItem[];
+  categoryEyebrow: string;
+  categoryTitle: string;
+  categoryText: string;
+}
+
 export interface VideoFeaturedContent {
   eyebrow: string;
   title: string;
   duration: string;
   href: string;
+  videoUrl?: string;
+  coverImage?: string;
   ctaLabel: string;
   visualClass: string;
 }
@@ -85,6 +109,8 @@ export interface VideoItem {
   title: string;
   duration: string;
   href: string;
+  videoUrl?: string;
+  coverImage?: string;
   visualClass: string;
 }
 
@@ -92,18 +118,9 @@ export interface VideoContent {
   eyebrow: string;
   title: string;
   text: string;
+  moreLabel: string;
   featured: VideoFeaturedContent;
   items: VideoItem[];
-}
-
-export interface FeaturedProductItem {
-  tag: string;
-  title: string;
-  text: string;
-  price: string;
-  href: string;
-  visualClass: string;
-  imageUrl?: string;
 }
 
 export interface FeaturedContent {
@@ -111,7 +128,8 @@ export interface FeaturedContent {
   title: string;
   text: string;
   detailsLabel: string;
-  items: FeaturedProductItem[];
+  moreLabel: string;
+  items: CatalogProduct[];
 }
 
 export interface CategoryItem {
@@ -124,6 +142,7 @@ export interface CategoriesContent {
   eyebrow: string;
   title: string;
   text: string;
+  moreLabel: string;
   items: CategoryItem[];
 }
 
@@ -162,6 +181,10 @@ export interface ContactFields {
   namePlaceholder: string;
   emailLabel: string;
   emailPlaceholder: string;
+  phoneLabel: string;
+  phonePlaceholder: string;
+  companyLabel: string;
+  companyPlaceholder: string;
   interestLabel: string;
   chooseOne: string;
   messageLabel: string;
@@ -169,16 +192,46 @@ export interface ContactFields {
   submitLabel: string;
 }
 
+export interface ContactFieldRule {
+  enabled: boolean;
+  required: boolean;
+}
+
+export interface ContactFieldConfig {
+  name: ContactFieldRule;
+  email: ContactFieldRule;
+  phone: ContactFieldRule;
+  company: ContactFieldRule;
+  interest: ContactFieldRule;
+  message: ContactFieldRule;
+}
+
 export interface ContactOption {
   value: string;
   label: string;
+}
+
+export type ContactFormFieldType = "text" | "email" | "tel" | "textarea" | "select";
+
+export interface ContactFormField {
+  id: string;
+  key: string;
+  type: ContactFormFieldType;
+  label: string;
+  placeholder: string;
+  enabled: boolean;
+  required: boolean;
+  options: ContactOption[];
 }
 
 export interface ContactContent {
   eyebrow: string;
   title: string;
   text: string;
+  successMessage: string;
+  formFields: ContactFormField[];
   fields: ContactFields;
+  fieldConfig: ContactFieldConfig;
   interestOptions: ContactOption[];
   demoStatus: string;
 }
@@ -202,18 +255,29 @@ export interface FooterContent {
   meta2: string;
 }
 
+export type SubscribeGiftStylePreset = "classic-gift" | "sport-burst" | "midnight-gift";
+export type SubscribeStylePreset = "classic-button" | SubscribeGiftStylePreset;
+
 export interface SubscribeContent {
+  enabled: boolean;
+  stylePreset: SubscribeStylePreset;
   toggleLabel: string;
   eyebrow: string;
   title: string;
-  emailLabel: string;
-  emailPlaceholder: string;
-  orderLabel: string;
-  orderPlaceholder: string;
+  text: string;
   benefitsTitle: string;
   benefits: string[];
-  buttonLabel: string;
-  demoStatus: string;
+  submitLabel: string;
+  successMessage: string;
+  sourceLabel: string;
+  formFields: ContactFormField[];
+}
+
+export type SiteThemePreset = "default" | "christmas";
+
+export interface SiteThemeContent {
+  preset: SiteThemePreset;
+  effectsEnabled: boolean;
 }
 
 export interface SiteMeta {
@@ -224,6 +288,7 @@ export interface SiteMeta {
 
 export interface SiteContent {
   meta: SiteMeta;
+  theme: SiteThemeContent;
   header: HeaderContent;
   hero: HeroContent;
   videos: VideoContent;

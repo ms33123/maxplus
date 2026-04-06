@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import TablePagination from "../../components/shared/TablePagination.vue";
+import { useTablePagination } from "../../composables/useTablePagination";
 import { useSettingsStore } from "../../stores/settings";
 import type { HomeReviewItem } from "../../types/admin";
 
@@ -33,6 +35,13 @@ const visibleItems = computed(() => {
     [item.author, item.meta, item.quote].join(" ").toLowerCase().includes(keyword)
   );
 });
+const { currentPage, pageSize, pageSizes, total, pagedItems, resetPagination } = useTablePagination(
+  visibleItems
+);
+
+watch(search, () => {
+  resetPagination();
+});
 
 const openCreate = () => {
   editingId.value = null;
@@ -46,7 +55,7 @@ const openEdit = (item: HomeReviewItem) => {
   dialogVisible.value = true;
 };
 
-const saveDraft = () => {
+const saveDraft = async () => {
   const payload: HomeReviewItem = {
     ...draft.value,
     author: draft.value.author.trim(),
@@ -63,40 +72,40 @@ const saveDraft = () => {
 
   payload.rating = Math.min(5, Math.max(1, payload.rating));
 
-  const targetIndex = settingsStore.homeContent.reviews.items.findIndex(
-    (item) => item.id === editingId.value
-  );
+  const previousItems = settingsStore.homeContent.reviews.items.map((item) => ({ ...item }));
+  const targetIndex = previousItems.findIndex((item) => item.id === editingId.value);
+  const nextItems = previousItems.slice();
 
   if (targetIndex >= 0) {
-    settingsStore.homeContent.reviews.items.splice(targetIndex, 1, payload);
+    nextItems.splice(targetIndex, 1, payload);
   } else {
-    settingsStore.homeContent.reviews.items.unshift(payload);
+    nextItems.unshift(payload);
   }
 
-  dialogVisible.value = false;
-  ElMessage.success(targetIndex >= 0 ? "评论已更新，记得保存到服务器。" : "评论已新增，记得保存到服务器。");
+  settingsStore.homeContent.reviews.items = nextItems;
+
+  try {
+    await settingsStore.saveHomeContent();
+    dialogVisible.value = false;
+    ElMessage.success(targetIndex >= 0 ? "评论已更新。" : "评论已新增。");
+  } catch (error) {
+    settingsStore.homeContent.reviews.items = previousItems;
+    ElMessage.error(error instanceof Error ? error.message : "评论保存失败。");
+  }
 };
 
 const removeItem = async (item: HomeReviewItem) => {
   await ElMessageBox.confirm(`确认删除评论“${item.author}”吗？`, "提示", { type: "warning" });
 
-  const targetIndex = settingsStore.homeContent.reviews.items.findIndex(
-    (current) => current.id === item.id
-  );
+  const previousItems = settingsStore.homeContent.reviews.items.map((current) => ({ ...current }));
+  settingsStore.homeContent.reviews.items = previousItems.filter((current) => current.id !== item.id);
 
-  if (targetIndex >= 0) {
-    settingsStore.homeContent.reviews.items.splice(targetIndex, 1);
-  }
-
-  ElMessage.success("评论已删除，记得保存到服务器。");
-};
-
-const save = async () => {
   try {
     await settingsStore.saveHomeContent();
-    ElMessage.success("评论内容已保存。");
+    ElMessage.success("评论已删除。");
   } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : "评论内容保存失败。");
+    settingsStore.homeContent.reviews.items = previousItems;
+    ElMessage.error(error instanceof Error ? error.message : "评论删除失败。");
   }
 };
 </script>
@@ -118,12 +127,11 @@ const save = async () => {
             class="toolbar-input"
           />
           <el-button @click="openCreate">新增评论</el-button>
-          <el-button type="primary" @click="save">保存更改</el-button>
         </div>
       </div>
 
       <div class="table-scroll">
-        <el-table :data="visibleItems" stripe>
+        <el-table :data="pagedItems" stripe>
           <el-table-column type="index" label="#" width="60" />
           <el-table-column prop="author" label="评论人" min-width="160" />
           <el-table-column prop="meta" label="身份 / 职位" min-width="180" />
@@ -153,6 +161,13 @@ const save = async () => {
           </el-table-column>
         </el-table>
       </div>
+
+      <TablePagination
+        v-model:current-page="currentPage"
+        v-model:page-size="pageSize"
+        :page-sizes="pageSizes"
+        :total="total"
+      />
     </section>
 
     <el-dialog
@@ -185,11 +200,7 @@ const save = async () => {
 <style scoped>
 .table-scroll {
   width: 100%;
-  overflow-x: auto;
-}
-
-.table-scroll :deep(.el-table) {
-  min-width: 1080px;
+  overflow: hidden;
 }
 
 .review-image {

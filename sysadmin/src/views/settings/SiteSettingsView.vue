@@ -1,8 +1,27 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { ElMessage } from "element-plus";
 import { useSettingsStore } from "../../stores/settings";
 
 const settingsStore = useSettingsStore();
+const themeOptions = [
+  {
+    value: "default",
+    label: "默认主题",
+    description: "保留当前前台默认视觉，不额外叠加节日装饰。"
+  },
+  {
+    value: "christmas",
+    label: "圣诞主题",
+    description: "切换为红绿节日配色，并可开启雪花和灯串等节日氛围。"
+  }
+] as const;
+
+const activeThemeOption = computed(
+  () =>
+    themeOptions.find((item) => item.value === settingsStore.siteSettings.theme.preset) ||
+    themeOptions[0]
+);
 
 const save = async () => {
   try {
@@ -90,6 +109,41 @@ const save = async () => {
             <el-input v-model="item.url" />
           </div>
         </div>
+      </section>
+
+      <section class="page-card">
+        <div class="page-card__header">
+          <div>
+            <p class="page-card__eyebrow">主题设置</p>
+            <h2>前台主题风格</h2>
+          </div>
+        </div>
+
+        <el-form label-position="top" class="editor-form">
+          <el-form-item label="主题预设">
+            <el-select v-model="settingsStore.siteSettings.theme.preset">
+              <el-option
+                v-for="item in themeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+
+          <div class="editor-block theme-settings__summary">
+            <strong>{{ activeThemeOption.label }}</strong>
+            <p>{{ activeThemeOption.description }}</p>
+          </div>
+
+          <div class="inline-row inline-row--spread theme-settings__toggle">
+            <div>
+              <strong>节日动效</strong>
+              <p>开启后，节日主题会展示飘雪和灯串动效；默认主题不会额外显示这些效果。</p>
+            </div>
+            <el-switch v-model="settingsStore.siteSettings.theme.effectsEnabled" />
+          </div>
+        </el-form>
       </section>
 
       <section class="page-card">

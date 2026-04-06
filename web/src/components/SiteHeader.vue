@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
 import type { HeaderContent } from "../types/content";
 import BrandLogo from "./BrandLogo.vue";
 
-defineProps<{
+const props = defineProps<{
   header: HeaderContent;
+  holidayMode?: boolean;
 }>();
 const isMenuOpen = ref(false);
+const route = useRoute();
+const header = computed(() => props.header);
+const holidayMessage = "Christmas Exclusive: Gift-ready picks and festive holiday offers.";
+const showHolidayBar = computed(() => Boolean(props.holidayMode) && route.path === "/");
 
 const toggleMenu = (): void => {
   isMenuOpen.value = !isMenuOpen.value;
@@ -19,6 +25,12 @@ const closeMenu = (): void => {
 
 <template>
   <header class="site-header">
+    <div v-if="showHolidayBar" class="topline topline--xmas">
+      <span class="topline__spark" aria-hidden="true"></span>
+      <span class="topline__pill">Holiday Gifts</span>
+      <span class="topline__text">{{ holidayMessage }}</span>
+    </div>
+
     <nav class="nav shell" :aria-label="header.navLabel">
       <BrandLogo :sub-label="header.logoSub" :ariaLabel="header.logoLabel" />
 

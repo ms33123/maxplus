@@ -21,7 +21,8 @@ function isPrivateHost(hostname: string) {
     hostname === "::1" ||
     /^10\.\d+\.\d+\.\d+$/.test(hostname) ||
     /^192\.168\.\d+\.\d+\.\d+$/.test(hostname) ||
-    /^172\.(1[6-9]|2\d|3[0-1])\.\d+\.\d+$/.test(hostname)
+    /^172\.(1[6-9]|2\d|3[0-1])\.\d+\.\d+$/.test(hostname) ||
+    /^169\.254\.\d+\.\d+$/.test(hostname)
   );
 }
 

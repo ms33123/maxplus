@@ -47,7 +47,7 @@ usePageMeta({
 <template>
   <PageBanner eyebrow="Catalog" title="Products" />
 
-  <section class="section catalog-zone">
+  <section class="section catalog-zone products-page">
     <div class="shell">
       <div class="catalog-toolbar reveal" v-reveal>
         <div class="catalog-toolbar__group">
@@ -92,7 +92,7 @@ usePageMeta({
         </RouterLink>
       </div>
 
-      <CatalogProductGrid :products="visibleProducts" />
+      <CatalogProductGrid :products="visibleProducts" variant="compact" />
     </div>
   </section>
 </template>

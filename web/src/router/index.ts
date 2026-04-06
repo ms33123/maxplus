@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import AboutPage from "../pages/AboutPage.vue";
+import BlogDetailPage from "../pages/BlogDetailPage.vue";
 import BlogPage from "../pages/BlogPage.vue";
 import BuyPage from "../pages/BuyPage.vue";
 import CategoryDetailPage from "../pages/CategoryDetailPage.vue";
@@ -9,6 +10,7 @@ import PolicyPage from "../pages/PolicyPage.vue";
 import ProductDetailPage from "../pages/ProductDetailPage.vue";
 import ProductsPage from "../pages/ProductsPage.vue";
 import SearchPage from "../pages/SearchPage.vue";
+import VideoDetailPage from "../pages/VideoDetailPage.vue";
 import VideosPage from "../pages/VideosPage.vue";
 
 export const router = createRouter({
@@ -25,9 +27,18 @@ export const router = createRouter({
       component: VideosPage
     },
     {
-      path: "/about",
-      name: "about",
+      path: "/videos/:slug",
+      name: "video-detail",
+      component: VideoDetailPage
+    },
+    {
+      path: "/brand-story",
+      name: "brand-story",
       component: AboutPage
+    },
+    {
+      path: "/about",
+      redirect: "/brand-story"
     },
     {
       path: "/products",
@@ -48,6 +59,11 @@ export const router = createRouter({
       path: "/blog",
       name: "blog",
       component: BlogPage
+    },
+    {
+      path: "/blog/:slug",
+      name: "blog-detail",
+      component: BlogDetailPage
     },
     {
       path: "/search",

@@ -1,65 +1,43 @@
 <script setup lang="ts">
+import CatalogProductCard from "./CatalogProductCard.vue";
 import type { CatalogProduct } from "../types/catalog";
 
 withDefaults(
   defineProps<{
     products: CatalogProduct[];
+    variant?: "default" | "compact";
+    detailsLabel?: string;
+    holidayBadge?: string;
     emptyTitle?: string;
     emptyText?: string;
   }>(),
   {
+    variant: "default",
+    detailsLabel: "View Details",
     emptyTitle: "No products match this filter.",
     emptyText: "Try another combination."
   }
 );
-
-const getMediaStyle = (imageUrl?: string) => ({
-  backgroundImage: `url(${imageUrl})`
-});
 </script>
 
 <template>
-  <div v-if="products.length" class="catalog-grid">
-    <article
+  <div
+    v-if="products.length"
+    :class="[
+      'catalog-grid',
+      {
+        'catalog-grid--compact': variant === 'compact'
+      }
+    ]"
+  >
+    <CatalogProductCard
       v-for="item in products"
       :key="item.slug"
-      class="catalog-card reveal"
-      v-reveal
-    >
-      <div
-        v-if="item.heroImage"
-        class="product-card__visual product-card__visual--photo"
-        :style="getMediaStyle(item.heroImage)"
-      ></div>
-      <div v-else :class="['product-card__visual', item.visualClass]"></div>
-
-      <div class="catalog-card__body">
-        <div class="catalog-card__topline">
-          <span class="product-card__tag">{{ item.tag }}</span>
-          <span class="catalog-card__stock">{{ item.stockStatus }}</span>
-        </div>
-
-        <h3 class="catalog-card__title">{{ item.title }}</h3>
-        <p>{{ item.summary }}</p>
-
-        <div class="catalog-card__chips">
-          <span>{{ item.sportType }}</span>
-          <span>{{ item.audience }}</span>
-          <span>{{ item.useCase }}</span>
-        </div>
-
-        <div class="catalog-card__footer">
-          <div>
-            <strong>{{ item.price }}</strong>
-            <small>{{ item.referencePrice }}</small>
-          </div>
-
-          <RouterLink :to="`/products/${item.slug}`" class="catalog-card__link">
-            View Details
-          </RouterLink>
-        </div>
-      </div>
-    </article>
+      :product="item"
+      :variant="variant"
+      :details-label="detailsLabel"
+      :holiday-badge="holidayBadge"
+    />
   </div>
 
   <div v-else class="catalog-empty reveal is-visible">
